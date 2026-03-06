@@ -1,6 +1,7 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, make_response
 from flask_cors import CORS
 from functools import wraps
+from datetime import datetime
 
 app = Flask(__name__, static_folder='.')
 CORS(app)
@@ -60,9 +61,32 @@ def require_token(f):
     
     return decorated
 
+# ========== CACHEABLE - HTTP Caching Headers ==========
+
+def set_cache_control(duration=300):
+    """Decorator để thêm Cache-Control header"""
+    def decorator(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            response = make_response(f(*args, **kwargs))
+            
+            # Nếu response là tuple (data, status_code)
+            if isinstance(response, tuple):
+                data, status_code = response
+                response = make_response(jsonify(data if isinstance(data, dict) else data), status_code)
+            
+            # Thêm Cache-Control header
+            response.headers['Cache-Control'] = f'public, max-age={duration}'
+            response.headers['Last-Modified'] = datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')
+            
+            return response
+        
+        return decorated
+    return decorator
+
 # ========== UNIFORM INTERFACE - CRUD Operations ==========
 
-# C - CREATE: Tạo user mới (POST)
+# C - CREATE: Tạo user mới (POST) - Không cache
 @app.route('/api/users', methods=['POST'])
 @require_token
 def create_user():
@@ -80,17 +104,22 @@ def create_user():
     }
     users.append(new_user)
     
-    return jsonify(new_user), 201
+    response = make_response(jsonify(new_user), 201)
+    # POST không cache (dữ liệu mới tạo)
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    return response
 
-# R - READ: Lấy tất cả users (GET)
+# R - READ: Lấy tất cả users (GET) - Cache 5 phút
 @app.route('/api/users', methods=['GET'])
 @require_token
+@set_cache_control(duration=300)
 def get_users():
     return jsonify(users), 200
 
-# R - READ: Lấy 1 user theo ID (GET)
+# R - READ: Lấy 1 user theo ID (GET) - Cache 5 phút
 @app.route('/api/users/<int:user_id>', methods=['GET'])
 @require_token
+@set_cache_control(duration=300)
 def get_user(user_id):
     # Tìm user theo ID
     user = next((u for u in users if u["id"] == user_id), None)
@@ -100,7 +129,7 @@ def get_user(user_id):
     
     return jsonify(user), 200
 
-# U - UPDATE: Cập nhật user (PUT)
+# U - UPDATE: Cập nhật user (PUT) - Không cache
 @app.route('/api/users/<int:user_id>', methods=['PUT'])
 @require_token
 def update_user(user_id):
@@ -118,9 +147,12 @@ def update_user(user_id):
     if "email" in data:
         user["email"] = data["email"]
     
-    return jsonify(user), 200
+    response = make_response(jsonify(user), 200)
+    # PUT không cache (dữ liệu vừa cập nhật)
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    return response
 
-# D - DELETE: Xóa user (DELETE)
+# D - DELETE: Xóa user (DELETE) - Không cache
 @app.route('/api/users/<int:user_id>', methods=['DELETE'])
 @require_token
 def delete_user(user_id):
@@ -135,7 +167,10 @@ def delete_user(user_id):
     # Xóa user khỏi danh sách
     users = [u for u in users if u["id"] != user_id]
     
-    return jsonify({"message": "User deleted successfully"}), 200
+    response = make_response(jsonify({"message": "User deleted successfully"}), 200)
+    # DELETE không cache (dữ liệu vừa xóa)
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True, port=3000)

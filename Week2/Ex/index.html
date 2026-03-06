@@ -12,10 +12,7 @@
             <p>✓ CLIENT-SERVER: HTML gọi Flask API</p>
             <p>✓ UNIFORM INTERFACE: GET, POST, PUT, DELETE (CRUD)</p>
             <p>✓ STATELESS: Dùng Token - Server không lưu session</p>
-        </div>
-
-        <!-- LOGIN SECTION -->
-        <div class="table-section" style="margin-top: 0;">
+            <p>✓ CACHEABLE: GET các tính chất, POST/PUT/DELETE thì không cache</p>
             <h2>🔑 STATELESS - Đăng nhập</h2>
             <p style="color: #666; margin-bottom: 10px;">Server không lưu session. Mỗi request phải gửi token.</p>
             <input id="username" type="text" placeholder="Username" style="width: 150px; display: inline-block;">
@@ -28,7 +25,7 @@
         <div class="grid">
             <!-- GET: Read -->
             <div class="section">
-                <h2>📖 GET - Đọc dữ liệu</h2>
+                <h2>📖 GET - Đọc dữ liệu (CACHEABLE ✓)</h2>
                 <p><strong>Lấy tất cả:</strong></p>
                 <button class="btn-get" onclick="getAllUsers()">Lấy tất cả users</button>
                 
@@ -36,33 +33,47 @@
                 <input id="getId" type="number" placeholder="Nhập ID">
                 <button class="btn-get" onclick="getOneUser()">Lấy user</button>
                 
+                <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                    💾 Cache: max-age=300 (5 phút) | public
+                </p>
+                
                 <pre id="getResult">Kết quả sẽ hiển thị ở đây...</pre>
+                <pre id="getCacheInfo" style="background: #e8f5e9; font-size: 11px;"></pre>
             </div>
 
             <!-- POST: Create -->
             <div class="section post">
-                <h2>➕ POST - Tạo mới</h2>
+                <h2>➕ POST - Tạo mới (Không cache)</h2>
                 <input id="createName" type="text" placeholder="Tên">
                 <input id="createEmail" type="email" placeholder="Email">
                 <button class="btn-post" onclick="createUser()">Tạo user</button>
+                <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                    🚫 Cache: no-cache, no-store (dữ liệu mới)
+                </p>
                 <pre id="createResult"></pre>
             </div>
 
             <!-- PUT: Update -->
             <div class="section put">
-                <h2>✏️ PUT - Cập nhật</h2>
+                <h2>✏️ PUT - Cập nhật (Không cache)</h2>
                 <input id="updateId" type="number" placeholder="ID">
                 <input id="updateName" type="text" placeholder="Tên mới">
                 <input id="updateEmail" type="email" placeholder="Email mới">
                 <button class="btn-put" onclick="updateUser()">Cập nhật</button>
+                <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                    🚫 Cache: no-cache, no-store (dữ liệu cập nhật)
+                </p>
                 <pre id="updateResult"></pre>
             </div>
 
             <!-- DELETE: Delete -->
             <div class="section delete">
-                <h2>🗑️ DELETE - Xóa</h2>
+                <h2>🗑️ DELETE - Xóa (Không cache)</h2>
                 <input id="deleteId" type="number" placeholder="ID">
                 <button class="btn-delete" onclick="deleteUser()">Xóa user</button>
+                <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                    🚫 Cache: no-cache, no-store (dữ liệu xóa)
+                </p>
                 <pre id="deleteResult"></pre>
             </div>
         </div>
@@ -145,6 +156,12 @@
                 const res = await fetchWithToken(`${API}/users`);
                 const data = await res.json();
                 document.getElementById('getResult').innerHTML = JSON.stringify(data, null, 2);
+                
+                // Hiển thị Cache headers
+                const cacheControl = res.headers.get('Cache-Control');
+                const lastModified = res.headers.get('Last-Modified');
+                document.getElementById('getCacheInfo').innerHTML = `Cache-Control: ${cacheControl}\nLast-Modified: ${lastModified}`;
+                
                 await loadTable();
             } catch (e) {
                 document.getElementById('getResult').innerHTML = 'Lỗi: ' + e.message;
@@ -162,6 +179,11 @@
                 const res = await fetchWithToken(`${API}/users/${id}`);
                 const data = await res.json();
                 document.getElementById('getResult').innerHTML = JSON.stringify(data, null, 2);
+                
+                // Hiển thị Cache headers
+                const cacheControl = res.headers.get('Cache-Control');
+                const lastModified = res.headers.get('Last-Modified');
+                document.getElementById('getCacheInfo').innerHTML = `Cache-Control: ${cacheControl}\nLast-Modified: ${lastModified}`;
             } catch (e) {
                 document.getElementById('getResult').innerHTML = 'Lỗi: ' + e.message;
             }
