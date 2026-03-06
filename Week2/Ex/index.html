@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>REST API - CLIENT-SERVER + UNIFORM INTERFACE</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .info {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f0f8ff;
+            border-radius: 5px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        .section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .section.post h2 { border-left-color: #4CAF50; color: #4CAF50; }
+        .section.put h2 { border-left-color: #FF9800; color: #FF9800; }
+        .section.delete h2 { border-left-color: #f44336; color: #f44336; }
+        
+        input, textarea {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px 5px 10px 0;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        button:hover { background: #5568d3; }
+        .btn-get { background: #2196F3; }
+        .btn-get:hover { background: #1976D2; }
+        .btn-post { background: #4CAF50; }
+        .btn-post:hover { background: #45a049; }
+        .btn-put { background: #FF9800; }
+        .btn-put:hover { background: #e68900; }
+        .btn-delete { background: #f44336; }
+        .btn-delete:hover { background: #da190b; }
+        
+        pre {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-size: 12px;
+            border: 1px solid #ddd;
+        }
+        .table-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        tr:hover { background: #f5f5f5; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 REST API Demo</h1>
+        <div class="info">
+            <p>✓ CLIENT-SERVER: HTML gọi Flask API</p>
+            <p>✓ UNIFORM INTERFACE: GET, POST, PUT, DELETE (CRUD)</p>
+        </div>
+
+        <div class="grid">
+            <!-- GET: Read -->
+            <div class="section">
+                <h2>📖 GET - Đọc dữ liệu</h2>
+                <p><strong>Lấy tất cả:</strong></p>
+                <button class="btn-get" onclick="getAllUsers()">Lấy tất cả users</button>
+                
+                <p style="margin-top: 15px;"><strong>Lấy 1 user:</strong></p>
+                <input id="getId" type="number" placeholder="Nhập ID">
+                <button class="btn-get" onclick="getOneUser()">Lấy user</button>
+                
+                <pre id="getResult">Kết quả sẽ hiển thị ở đây...</pre>
+            </div>
+
+            <!-- POST: Create -->
+            <div class="section post">
+                <h2>➕ POST - Tạo mới</h2>
+                <input id="createName" type="text" placeholder="Tên">
+                <input id="createEmail" type="email" placeholder="Email">
+                <button class="btn-post" onclick="createUser()">Tạo user</button>
+                <pre id="createResult"></pre>
+            </div>
+
+            <!-- PUT: Update -->
+            <div class="section put">
+                <h2>✏️ PUT - Cập nhật</h2>
+                <input id="updateId" type="number" placeholder="ID">
+                <input id="updateName" type="text" placeholder="Tên mới">
+                <input id="updateEmail" type="email" placeholder="Email mới">
+                <button class="btn-put" onclick="updateUser()">Cập nhật</button>
+                <pre id="updateResult"></pre>
+            </div>
+
+            <!-- DELETE: Delete -->
+            <div class="section delete">
+                <h2>🗑️ DELETE - Xóa</h2>
+                <input id="deleteId" type="number" placeholder="ID">
+                <button class="btn-delete" onclick="deleteUser()">Xóa user</button>
+                <pre id="deleteResult"></pre>
+            </div>
+        </div>
+
+        <!-- Danh sách users -->
+        <div class="table-section">
+            <h2>📋 Danh sách users hiện tại</h2>
+            <button class="btn-get" onclick="loadTable()">🔄 Refresh</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr><td colspan="3" style="text-align: center;">Đang tải...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const API = '/api';
+
+        // GET - Lấy tất cả users
+        async function getAllUsers() {
+            try {
+                const res = await fetch(`${API}/users`);
+                const data = await res.json();
+                document.getElementById('getResult').innerHTML = JSON.stringify(data, null, 2);
+                await loadTable();
+            } catch (e) {
+                document.getElementById('getResult').innerHTML = 'Lỗi: ' + e.message;
+            }
+        }
+
+        // GET - Lấy 1 user theo ID
+        async function getOneUser() {
+            const id = document.getElementById('getId').value;
+            if (!id) {
+                alert('Nhập ID');
+                return;
+            }
+            try {
+                const res = await fetch(`${API}/users/${id}`);
+                const data = await res.json();
+                document.getElementById('getResult').innerHTML = JSON.stringify(data, null, 2);
+            } catch (e) {
+                document.getElementById('getResult').innerHTML = 'Lỗi: ' + e.message;
+            }
+        }
+
+        // POST - Tạo user mới
+        async function createUser() {
+            const name = document.getElementById('createName').value;
+            const email = document.getElementById('createEmail').value;
+            
+            if (!name || !email) {
+                alert('Nhập đầy đủ tên và email');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API}/users`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email })
+                });
+                
+                if (res.status === 201) {
+                    const data = await res.json();
+                    document.getElementById('createResult').innerHTML = '✓ Tạo thành công!\n' + JSON.stringify(data, null, 2);
+                    document.getElementById('createName').value = '';
+                    document.getElementById('createEmail').value = '';
+                    await loadTable();
+                } else {
+                    const data = await res.json();
+                    document.getElementById('createResult').innerHTML = JSON.stringify(data, null, 2);
+                }
+            } catch (e) {
+                document.getElementById('createResult').innerHTML = 'Lỗi: ' + e.message;
+            }
+        }
+
+        // PUT - Cập nhật user
+        async function updateUser() {
+            const id = document.getElementById('updateId').value;
+            const name = document.getElementById('updateName').value;
+            const email = document.getElementById('updateEmail').value;
+            
+            if (!id) {
+                alert('Nhập ID');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API}/users/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email })
+                });
+                
+                const data = await res.json();
+                document.getElementById('updateResult').innerHTML = (res.status === 200 ? '✓ Cập nhật thành công!\n' : '') + JSON.stringify(data, null, 2);
+                await loadTable();
+            } catch (e) {
+                document.getElementById('updateResult').innerHTML = 'Lỗi: ' + e.message;
+            }
+        }
+
+        // DELETE - Xóa user
+        async function deleteUser() {
+            const id = document.getElementById('deleteId').value;
+            
+            if (!id) {
+                alert('Nhập ID');
+                return;
+            }
+            
+            if (!confirm(`Bạn chắc chắn muốn xóa user ID ${id}?`)) {
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API}/users/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await res.json();
+                document.getElementById('deleteResult').innerHTML = (res.status === 200 ? '✓ Xóa thành công!' : '✗ Lỗi') + '\n' + JSON.stringify(data, null, 2);
+                document.getElementById('deleteId').value = '';
+                await loadTable();
+            } catch (e) {
+                document.getElementById('deleteResult').innerHTML = 'Lỗi: ' + e.message;
+            }
+        }
+
+        // Tải danh sách vào bảng
+        async function loadTable() {
+            try {
+                const res = await fetch(`${API}/users`);
+                const users = await res.json();
+                
+                const tbody = document.getElementById('tableBody');
+                
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align: center;">Không có users</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = users.map(user => `
+                    <tr>
+                        <td>${user.id}</td>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                document.getElementById('tableBody').innerHTML = `<tr><td colspan="3" style="color: red;">Lỗi: ${e.message}</td></tr>`;
+            }
+        }
+
+        // Load lần đầu khi trang mở
+        window.addEventListener('load', () => {
+            getAllUsers();
+        });
+    </script>
+</body>
+</html>
