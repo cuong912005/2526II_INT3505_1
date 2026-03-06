@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
+from functools import wraps
 
 app = Flask(__name__, static_folder='.')
 CORS(app)
@@ -10,15 +11,60 @@ users = [
     {"id": 2, "name": "Tran Thi B", "email": "b@example.com"}
 ]
 
+# STATELESS: Lưu token giả (trong thực tế dùng JWT)
+valid_tokens = {}
+
 # Web page - CLIENT-SERVER
 @app.route('/')
 def home():
     return send_from_directory('.', 'index.html')
 
+# ========== STATELESS - Authentication ==========
+
+# STATELESS: Login để lấy token
+@app.route('/api/login', methods=['POST'])
+def login():
+    # Server không lưu session, chỉ cấp token
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    
+    # Kiểm tra thông tin đơn giản
+    if username and password:
+        # Tạo token đơn giản (thực tế dùng JWT)
+        token = f"token_{username}_{len(valid_tokens) + 1}"
+        valid_tokens[token] = username
+        
+        return jsonify({"token": token, "message": "Login successful"}), 200
+    
+    return jsonify({"error": "Invalid credentials"}), 401
+
+# STATELESS: Decorator kiểm tra token
+def require_token(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        # Lấy token từ header
+        auth_header = request.headers.get('Authorization')
+        
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({"error": "Missing or invalid token"}), 401
+        
+        token = auth_header.replace('Bearer ', '')
+        
+        # Kiểm tra token có hợp lệ không
+        if token not in valid_tokens:
+            return jsonify({"error": "Invalid token"}), 401
+        
+        # Token hợp lệ, tiếp tục xử lý request
+        return f(*args, **kwargs)
+    
+    return decorated
+
 # ========== UNIFORM INTERFACE - CRUD Operations ==========
 
 # C - CREATE: Tạo user mới (POST)
 @app.route('/api/users', methods=['POST'])
+@require_token
 def create_user():
     data = request.get_json()
     
@@ -38,11 +84,13 @@ def create_user():
 
 # R - READ: Lấy tất cả users (GET)
 @app.route('/api/users', methods=['GET'])
+@require_token
 def get_users():
     return jsonify(users), 200
 
 # R - READ: Lấy 1 user theo ID (GET)
 @app.route('/api/users/<int:user_id>', methods=['GET'])
+@require_token
 def get_user(user_id):
     # Tìm user theo ID
     user = next((u for u in users if u["id"] == user_id), None)
@@ -54,6 +102,7 @@ def get_user(user_id):
 
 # U - UPDATE: Cập nhật user (PUT)
 @app.route('/api/users/<int:user_id>', methods=['PUT'])
+@require_token
 def update_user(user_id):
     # Tìm user theo ID
     user = next((u for u in users if u["id"] == user_id), None)
@@ -73,6 +122,7 @@ def update_user(user_id):
 
 # D - DELETE: Xóa user (DELETE)
 @app.route('/api/users/<int:user_id>', methods=['DELETE'])
+@require_token
 def delete_user(user_id):
     global users
     

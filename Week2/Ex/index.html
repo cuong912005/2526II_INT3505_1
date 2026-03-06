@@ -3,135 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>REST API - CLIENT-SERVER + UNIFORM INTERFACE</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        .info {
-            text-align: center;
-            color: #666;
-            font-style: italic;
-            margin-bottom: 30px;
-            padding: 15px;
-            background: #f0f8ff;
-            border-radius: 5px;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        @media (max-width: 768px) {
-            .grid { grid-template-columns: 1fr; }
-        }
-        .section {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-        .section h2 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-        .section.post h2 { border-left-color: #4CAF50; color: #4CAF50; }
-        .section.put h2 { border-left-color: #FF9800; color: #FF9800; }
-        .section.delete h2 { border-left-color: #f44336; color: #f44336; }
-        
-        input, textarea {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
-        }
-        button {
-            padding: 10px 20px;
-            margin: 10px 5px 10px 0;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-        button:hover { background: #5568d3; }
-        .btn-get { background: #2196F3; }
-        .btn-get:hover { background: #1976D2; }
-        .btn-post { background: #4CAF50; }
-        .btn-post:hover { background: #45a049; }
-        .btn-put { background: #FF9800; }
-        .btn-put:hover { background: #e68900; }
-        .btn-delete { background: #f44336; }
-        .btn-delete:hover { background: #da190b; }
-        
-        pre {
-            background: #f4f4f4;
-            padding: 15px;
-            border-radius: 4px;
-            overflow-x: auto;
-            margin: 10px 0;
-            font-size: 12px;
-            border: 1px solid #ddd;
-        }
-        .table-section {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 30px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        th {
-            background: #667eea;
-            color: white;
-            padding: 12px;
-            text-align: left;
-            font-weight: bold;
-        }
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-        }
-        tr:hover { background: #f5f5f5; }
-    </style>
+    
 </head>
 <body>
     <div class="container">
         <h1>🔧 REST API Demo</h1>
-        <div class="info">
+    <div class="info">
             <p>✓ CLIENT-SERVER: HTML gọi Flask API</p>
             <p>✓ UNIFORM INTERFACE: GET, POST, PUT, DELETE (CRUD)</p>
+            <p>✓ STATELESS: Dùng Token - Server không lưu session</p>
+        </div>
+
+        <!-- LOGIN SECTION -->
+        <div class="table-section" style="margin-top: 0;">
+            <h2>🔑 STATELESS - Đăng nhập</h2>
+            <p style="color: #666; margin-bottom: 10px;">Server không lưu session. Mỗi request phải gửi token.</p>
+            <input id="username" type="text" placeholder="Username" style="width: 150px; display: inline-block;">
+            <input id="password" type="password" placeholder="Password" style="width: 150px; display: inline-block;">
+            <button class="btn-get" onclick="login()">Đăng nhập</button>
+            <button onclick="clearToken()">Logout</button>
+            <pre id="tokenResult">Chưa đăng nhập</pre>
         </div>
 
         <div class="grid">
@@ -197,11 +88,61 @@
 
     <script>
         const API = '/api';
+        let currentToken = null;
+
+        // STATELESS: Login để lấy token
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                alert('Nhập username và password');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                if (res.status === 200) {
+                    const data = await res.json();
+                    currentToken = data.token;
+                    document.getElementById('tokenResult').innerHTML = `✓ Token: ${currentToken}`;
+                    await getAllUsers();
+                } else {
+                    document.getElementById('tokenResult').innerHTML = 'Đăng nhập thất bại';
+                }
+            } catch (e) {
+                document.getElementById('tokenResult').innerHTML = 'Lỗi: ' + e.message;
+            }
+        }
+
+        // Xóa token (logout)
+        function clearToken() {
+            currentToken = null;
+            document.getElementById('tokenResult').innerHTML = 'Chưa đăng nhập';
+        }
+
+        // Hàm helper gửi request với token
+        async function fetchWithToken(url, options = {}) {
+            if (!currentToken) {
+                alert('Vui lòng đăng nhập trước');
+                throw new Error('No token');
+            }
+            
+            options.headers = options.headers || {};
+            options.headers['Authorization'] = `Bearer ${currentToken}`;
+            
+            return fetch(url, options);
+        }
 
         // GET - Lấy tất cả users
         async function getAllUsers() {
             try {
-                const res = await fetch(`${API}/users`);
+                const res = await fetchWithToken(`${API}/users`);
                 const data = await res.json();
                 document.getElementById('getResult').innerHTML = JSON.stringify(data, null, 2);
                 await loadTable();
@@ -218,7 +159,7 @@
                 return;
             }
             try {
-                const res = await fetch(`${API}/users/${id}`);
+                const res = await fetchWithToken(`${API}/users/${id}`);
                 const data = await res.json();
                 document.getElementById('getResult').innerHTML = JSON.stringify(data, null, 2);
             } catch (e) {
@@ -237,7 +178,7 @@
             }
             
             try {
-                const res = await fetch(`${API}/users`, {
+                const res = await fetchWithToken(`${API}/users`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, email })
@@ -270,7 +211,7 @@
             }
             
             try {
-                const res = await fetch(`${API}/users/${id}`, {
+                const res = await fetchWithToken(`${API}/users/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, email })
@@ -298,7 +239,7 @@
             }
             
             try {
-                const res = await fetch(`${API}/users/${id}`, {
+                const res = await fetchWithToken(`${API}/users/${id}`, {
                     method: 'DELETE'
                 });
                 
@@ -314,7 +255,7 @@
         // Tải danh sách vào bảng
         async function loadTable() {
             try {
-                const res = await fetch(`${API}/users`);
+                const res = await fetchWithToken(`${API}/users`);
                 const users = await res.json();
                 
                 const tbody = document.getElementById('tableBody');
@@ -335,11 +276,6 @@
                 document.getElementById('tableBody').innerHTML = `<tr><td colspan="3" style="color: red;">Lỗi: ${e.message}</td></tr>`;
             }
         }
-
-        // Load lần đầu khi trang mở
-        window.addEventListener('load', () => {
-            getAllUsers();
-        });
     </script>
 </body>
 </html>
