@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Step 1: CLIENT-SERVER</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        h2 { color: #333; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { background: #f4f4f4; padding: 10px; border: 1px solid #ddd; }
+        .info { color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <h1>Step 1: CLIENT-SERVER</h1>
+    
+    <div class="info">
+        <p>✓ HTML Client chạy trên trình duyệt</p>
+        <p>✓ Server Flask chạy riêng</p>
+        <p>✓ Client gọi Server qua HTTP API</p>
+    </div>
+
+    <h2>Users List</h2>
+    <button onclick="loadUsers()">Load Users</button>
+    <pre id="result">Click button để load data...</pre>
+
+    <script>
+        async function loadUsers() {
+            const response = await fetch('/api/users');
+            const data = await response.json();
+            document.getElementById('result').innerHTML = JSON.stringify(data, null, 2);
+        }
+
+        loadUsers();
+    </script>
+</body>
+</html>

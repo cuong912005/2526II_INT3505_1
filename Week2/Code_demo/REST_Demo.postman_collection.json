@@ -1,0 +1,305 @@
+{
+	"info": {
+		"name": "REST Demo Collection",
+		"description": "Demo 5 tính chất REST",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. STATELESS",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"123\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5001/login",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5001",
+							"path": ["login"]
+						}
+					}
+				},
+				{
+					"name": "Get Profile (with token)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer token_admin_abc123"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5001/profile",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5001",
+							"path": ["profile"]
+						}
+					}
+				},
+				{
+					"name": "Get Data (with token)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer token_admin_abc123"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5001/data",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5001",
+							"path": ["data"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. CLIENT-SERVER",
+			"item": [
+				{
+					"name": "Get All Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5002/api/products",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5002",
+							"path": ["api", "products"]
+						}
+					}
+				},
+				{
+					"name": "Get Product by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5002/api/products/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5002",
+							"path": ["api", "products", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. CACHEABLE",
+			"item": [
+				{
+					"name": "Get News (Cache 1h)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5003/api/news",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5003",
+							"path": ["api", "news"]
+						}
+					}
+				},
+				{
+					"name": "Get Time (No Cache)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5003/api/time",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5003",
+							"path": ["api", "time"]
+						}
+					}
+				},
+				{
+					"name": "Get Static Data (Cache 24h)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5003/api/static-data",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5003",
+							"path": ["api", "static-data"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "4. UNIFORM INTERFACE",
+			"item": [
+				{
+					"name": "GET All Books",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5004/api/books",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5004",
+							"path": ["api", "books"]
+						}
+					}
+				},
+				{
+					"name": "GET Book by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5004/api/books/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5004",
+							"path": ["api", "books", "1"]
+						}
+					}
+				},
+				{
+					"name": "POST Create Book",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"New Book\",\n    \"author\": \"Author C\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5004/api/books",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5004",
+							"path": ["api", "books"]
+						}
+					}
+				},
+				{
+					"name": "PUT Update Book",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Updated Title\",\n    \"author\": \"Author A\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5004/api/books/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5004",
+							"path": ["api", "books", "1"]
+						}
+					}
+				},
+				{
+					"name": "DELETE Book",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5004/api/books/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5004",
+							"path": ["api", "books", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "5. LAYERED SYSTEM",
+			"item": [
+				{
+					"name": "Public Endpoint",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5005/api/public",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5005",
+							"path": ["api", "public"]
+						}
+					}
+				},
+				{
+					"name": "Protected Endpoint",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer mytoken123"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5005/api/protected",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5005",
+							"path": ["api", "protected"]
+						}
+					}
+				},
+				{
+					"name": "Admin Endpoint",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer admintoken"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5005/api/admin",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5005",
+							"path": ["api", "admin"]
+						}
+					}
+				}
+			]
+		}
+	]
+}

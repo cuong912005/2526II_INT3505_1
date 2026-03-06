@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Client-Server Demo</title>
+</head>
+<body>
+    <h1>Product List</h1>
+    <div id="products"></div>
+    
+    <script>
+        fetch('http://localhost:5002/api/products')
+            .then(response => response.json())
+            .then(data => {
+                const div = document.getElementById('products');
+                data.forEach(product => {
+                    div.innerHTML += `<p>${product.name} - $${product.price}</p>`;
+                });
+            });
+    </script>
+</body>
+</html>
