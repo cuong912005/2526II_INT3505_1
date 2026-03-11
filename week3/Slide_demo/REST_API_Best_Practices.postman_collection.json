@@ -1,0 +1,507 @@
+{
+	"info": {
+		"_postman_id": "best-practices-2026",
+		"name": "REST API Best Practices Demo",
+		"description": "Minh họa các best practices: Consistency, Clarity, Extensibility\n\n**1. CONSISTENCY:**\n- Cấu trúc response nhất quán\n- Format lỗi chuẩn\n- HTTP status codes đúng\n\n**2. CLARITY:**\n- Plural nouns: /products\n- Lowercase với hyphens\n- Không động từ trong URL\n\n**3. EXTENSIBILITY:**\n- Versioning: /api/v1/, /api/v2/\n- Query params cho filtering/sorting\n- Response structure linh hoạt",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. CONSISTENCY - Nhất quán",
+			"item": [
+				{
+					"name": "GET /products - Danh sách với pagination",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products?page=1&limit=10",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Số trang"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Số items mỗi trang"
+								}
+							]
+						},
+						"description": "CONSISTENCY: Response structure luôn có data, page, limit, total"
+					}
+				},
+				{
+					"name": "GET /products - Filter by category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products?category=electronics",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"],
+							"query": [
+								{
+									"key": "category",
+									"value": "electronics",
+									"description": "Filter theo category"
+								}
+							]
+						},
+						"description": "CONSISTENCY: Cùng endpoint, khác query params"
+					}
+				},
+				{
+					"name": "GET /products - Filter by status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products?status=active",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"],
+							"query": [
+								{
+									"key": "status",
+									"value": "active",
+									"description": "Filter theo status"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "GET /products/:id - Lấy 1 product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "1"]
+						},
+						"description": "CONSISTENCY: Trả về object trực tiếp (không wrap trong data)"
+					}
+				},
+				{
+					"name": "GET /products/:id - Not Found (404)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/999",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "999"]
+						},
+						"description": "CONSISTENCY: Error format chuẩn với code, message, details"
+					}
+				},
+				{
+					"name": "POST /products - Tạo mới (201 Created)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Phone\",\n  \"price\": 500,\n  \"category\": \"electronics\",\n  \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"]
+						},
+						"description": "CONSISTENCY: POST tạo mới luôn trả về 201 Created"
+					}
+				},
+				{
+					"name": "POST /products - Invalid (400 Bad Request)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Phone\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"]
+						},
+						"description": "CONSISTENCY: Error format giống nhau cho validation errors"
+					}
+				},
+				{
+					"name": "PUT /products/:id - Cập nhật toàn bộ (200 OK)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Laptop Pro\",\n  \"price\": 1500,\n  \"category\": \"electronics\",\n  \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "1"]
+						},
+						"description": "CONSISTENCY: PUT cập nhật toàn bộ, trả về 200 OK"
+					}
+				},
+				{
+					"name": "PATCH /products/:id - Cập nhật một phần (200 OK)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"price\": 900\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "1"]
+						},
+						"description": "CONSISTENCY: PATCH chỉ cập nhật fields được gửi lên"
+					}
+				},
+				{
+					"name": "DELETE /products/:id - Xóa (204 No Content)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/2",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "2"]
+						},
+						"description": "CONSISTENCY: DELETE thành công luôn trả về 204 No Content"
+					}
+				}
+			],
+			"description": "Các endpoints minh họa tính NHẤT QUÁN:\n- Cấu trúc response giống nhau\n- Format lỗi chuẩn\n- HTTP status codes đúng"
+		},
+		{
+			"name": "2. CLARITY - Dễ hiểu",
+			"item": [
+				{
+					"name": "GOOD: GET /products (plural noun)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"]
+						},
+						"description": "CLARITY: Dùng plural noun 'products' (không phải 'product')"
+					}
+				},
+				{
+					"name": "GOOD: GET /products/:id (không có động từ)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "1"]
+						},
+						"description": "CLARITY: Không dùng động từ '/getProduct', HTTP method GET đã chỉ rõ action"
+					}
+				},
+				{
+					"name": "GOOD: POST /products (không có 'create')",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Keyboard\",\n  \"price\": 50,\n  \"category\": \"electronics\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"]
+						},
+						"description": "CLARITY: POST /products (không phải /createProduct), HTTP method đã chỉ rõ"
+					}
+				}
+			],
+			"description": "Naming conventions:\n- Plural nouns: /products\n- Lowercase: /products\n- Hyphens: /product-categories\n- Không động từ: GET /products (không phải /getProducts)"
+		},
+		{
+			"name": "3. EXTENSIBILITY - Dễ mở rộng",
+			"item": [
+				{
+					"name": "GET /api/v1/products - Version 1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"]
+						},
+						"description": "EXTENSIBILITY: API v1 với response structure flat"
+					}
+				},
+				{
+					"name": "GET /api/v2/products - Version 2",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v2/products",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v2", "products"]
+						},
+						"description": "EXTENSIBILITY: API v2 với response structure khác (nested), client cũ vẫn dùng v1"
+					}
+				},
+				{
+					"name": "GET /products/search - Advanced filtering",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/search?category=electronics&min_price=10&max_price=100&sort=price&order=asc",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "search"],
+							"query": [
+								{
+									"key": "category",
+									"value": "electronics",
+									"description": "Filter by category"
+								},
+								{
+									"key": "min_price",
+									"value": "10",
+									"description": "Giá tối thiểu"
+								},
+								{
+									"key": "max_price",
+									"value": "100",
+									"description": "Giá tối đa"
+								},
+								{
+									"key": "sort",
+									"value": "price",
+									"description": "Sort by field"
+								},
+								{
+									"key": "order",
+									"value": "asc",
+									"description": "asc hoặc desc"
+								}
+							]
+						},
+						"description": "EXTENSIBILITY: Query params cho filtering và sorting, dễ thêm filters mới"
+					}
+				},
+				{
+					"name": "GET /products/search - Sort by name DESC",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/search?sort=name&order=desc",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "search"],
+							"query": [
+								{
+									"key": "sort",
+									"value": "name"
+								},
+								{
+									"key": "order",
+									"value": "desc"
+								}
+							]
+						},
+						"description": "EXTENSIBILITY: Linh hoạt với nhiều options sorting"
+					}
+				}
+			],
+			"description": "Tính mở rộng:\n- Versioning: /api/v1/, /api/v2/\n- Query params cho filters\n- Response structure linh hoạt"
+		},
+		{
+			"name": "Full CRUD Workflow",
+			"item": [
+				{
+					"name": "1. GET All Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"]
+						}
+					}
+				},
+				{
+					"name": "2. CREATE New Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Headphones\",\n  \"price\": 80,\n  \"category\": \"electronics\",\n  \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"]
+						}
+					}
+				},
+				{
+					"name": "3. GET Product by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/4",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "4"]
+						}
+					}
+				},
+				{
+					"name": "4. UPDATE Product (PUT)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Headphones Pro\",\n  \"price\": 120,\n  \"category\": \"electronics\",\n  \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/4",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "4"]
+						}
+					}
+				},
+				{
+					"name": "5. PATCH Product (partial update)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"inactive\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/4",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "4"]
+						}
+					}
+				},
+				{
+					"name": "6. DELETE Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/4",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "4"]
+						}
+					}
+				}
+			],
+			"description": "Workflow đầy đủ từ CREATE đến DELETE"
+		}
+	]
+}

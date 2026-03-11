@@ -7,13 +7,13 @@
 </head>
 <body>
     <div class="container">
-        <h1>🔧 REST API Demo</h1>
+        <h1>REST API Demo</h1>
     <div class="info">
-            <p>✓ CLIENT-SERVER: HTML gọi Flask API</p>
-            <p>✓ UNIFORM INTERFACE: GET, POST, PUT, DELETE (CRUD)</p>
-            <p>✓ STATELESS: Dùng Token - Server không lưu session</p>
-            <p>✓ CACHEABLE: GET các tính chất, POST/PUT/DELETE thì không cache</p>
-            <h2>🔑 STATELESS - Đăng nhập</h2>
+            <p>CLIENT-SERVER: HTML gọi Flask API</p>
+            <p>UNIFORM INTERFACE: GET, POST, PUT, DELETE (CRUD)</p>
+            <p>STATELESS: Dùng Token - Server không lưu session</p>
+            <p>CACHEABLE: GET các tính chất, POST/PUT/DELETE thì không cache</p>
+            <h2>STATELESS - Đăng nhập</h2>
             <p style="color: #666; margin-bottom: 10px;">Server không lưu session. Mỗi request phải gửi token.</p>
             <input id="username" type="text" placeholder="Username" style="width: 150px; display: inline-block;">
             <input id="password" type="password" placeholder="Password" style="width: 150px; display: inline-block;">
@@ -25,7 +25,7 @@
         <div class="grid">
             <!-- GET: Read -->
             <div class="section">
-                <h2>📖 GET - Đọc dữ liệu (CACHEABLE ✓)</h2>
+                <h2>GET - Đọc dữ liệu (CACHEABLE)</h2>
                 <p><strong>Lấy tất cả:</strong></p>
                 <button class="btn-get" onclick="getAllUsers()">Lấy tất cả users</button>
                 
@@ -34,7 +34,7 @@
                 <button class="btn-get" onclick="getOneUser()">Lấy user</button>
                 
                 <p style="margin-top: 10px; font-size: 12px; color: #666;">
-                    💾 Cache: max-age=300 (5 phút) | public
+                    Cache: max-age=300 (5 phút) | public
                 </p>
                 
                 <pre id="getResult">Kết quả sẽ hiển thị ở đây...</pre>
@@ -43,36 +43,36 @@
 
             <!-- POST: Create -->
             <div class="section post">
-                <h2>➕ POST - Tạo mới (Không cache)</h2>
+                <h2>POST - Tạo mới (Không cache)</h2>
                 <input id="createName" type="text" placeholder="Tên">
                 <input id="createEmail" type="email" placeholder="Email">
                 <button class="btn-post" onclick="createUser()">Tạo user</button>
                 <p style="margin-top: 10px; font-size: 12px; color: #666;">
-                    🚫 Cache: no-cache, no-store (dữ liệu mới)
+                    Cache: no-cache, no-store (dữ liệu mới)
                 </p>
                 <pre id="createResult"></pre>
             </div>
 
             <!-- PUT: Update -->
             <div class="section put">
-                <h2>✏️ PUT - Cập nhật (Không cache)</h2>
+                <h2>PUT - Cập nhật (Không cache)</h2>
                 <input id="updateId" type="number" placeholder="ID">
                 <input id="updateName" type="text" placeholder="Tên mới">
                 <input id="updateEmail" type="email" placeholder="Email mới">
                 <button class="btn-put" onclick="updateUser()">Cập nhật</button>
                 <p style="margin-top: 10px; font-size: 12px; color: #666;">
-                    🚫 Cache: no-cache, no-store (dữ liệu cập nhật)
+                    Cache: no-cache, no-store (dữ liệu cập nhật)
                 </p>
                 <pre id="updateResult"></pre>
             </div>
 
             <!-- DELETE: Delete -->
             <div class="section delete">
-                <h2>🗑️ DELETE - Xóa (Không cache)</h2>
+                <h2>DELETE - Xóa (Không cache)</h2>
                 <input id="deleteId" type="number" placeholder="ID">
                 <button class="btn-delete" onclick="deleteUser()">Xóa user</button>
                 <p style="margin-top: 10px; font-size: 12px; color: #666;">
-                    🚫 Cache: no-cache, no-store (dữ liệu xóa)
+                    Cache: no-cache, no-store (dữ liệu xóa)
                 </p>
                 <pre id="deleteResult"></pre>
             </div>
@@ -80,8 +80,8 @@
 
         <!-- Danh sách users -->
         <div class="table-section">
-            <h2>📋 Danh sách users hiện tại</h2>
-            <button class="btn-get" onclick="loadTable()">🔄 Refresh</button>
+            <h2>Danh sách users hiện tại</h2>
+            <button class="btn-get" onclick="loadTable()">Refresh</button>
             <table>
                 <thead>
                     <tr>
@@ -121,7 +121,7 @@
                 if (res.status === 200) {
                     const data = await res.json();
                     currentToken = data.token;
-                    document.getElementById('tokenResult').innerHTML = `✓ Token: ${currentToken}`;
+                    document.getElementById('tokenResult').innerHTML = `Token: ${currentToken}`;
                     await getAllUsers();
                 } else {
                     document.getElementById('tokenResult').innerHTML = 'Đăng nhập thất bại';
@@ -208,7 +208,7 @@
                 
                 if (res.status === 201) {
                     const data = await res.json();
-                    document.getElementById('createResult').innerHTML = '✓ Tạo thành công!\n' + JSON.stringify(data, null, 2);
+                    document.getElementById('createResult').innerHTML = 'Tạo thành công!\n' + JSON.stringify(data, null, 2);
                     document.getElementById('createName').value = '';
                     document.getElementById('createEmail').value = '';
                     await loadTable();
@@ -240,7 +240,7 @@
                 });
                 
                 const data = await res.json();
-                document.getElementById('updateResult').innerHTML = (res.status === 200 ? '✓ Cập nhật thành công!\n' : '') + JSON.stringify(data, null, 2);
+                document.getElementById('updateResult').innerHTML = (res.status === 200 ? 'Cập nhật thành công!\n' : '') + JSON.stringify(data, null, 2);
                 await loadTable();
             } catch (e) {
                 document.getElementById('updateResult').innerHTML = 'Lỗi: ' + e.message;
@@ -266,7 +266,7 @@
                 });
                 
                 const data = await res.json();
-                document.getElementById('deleteResult').innerHTML = (res.status === 200 ? '✓ Xóa thành công!' : '✗ Lỗi') + '\n' + JSON.stringify(data, null, 2);
+                document.getElementById('deleteResult').innerHTML = (res.status === 200 ? 'Xóa thành công!' : 'Lỗi') + '\n' + JSON.stringify(data, null, 2);
                 document.getElementById('deleteId').value = '';
                 await loadTable();
             } catch (e) {

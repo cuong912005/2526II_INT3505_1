@@ -59,10 +59,12 @@ def error_response(message, status_code=400, error_code=None, details=None):
 # VERSIONING 
 def api_version(version):
     """Decorator để quản lý phiên bản API"""
+    
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             # Có thể thêm logic xử lý version ở đây
+            
             return f(*args, **kwargs)
         return decorated_function
     return decorator
@@ -73,7 +75,7 @@ def api_version(version):
 @api_version('v1')
 def get_products():
     """
-    GET /api/v1/products
+    GET /api/v1/products?
     Lấy danh sách sản phẩm với hỗ trợ query parameters
     
     Query Parameters:
