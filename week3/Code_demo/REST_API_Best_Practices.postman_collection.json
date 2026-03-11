@@ -1,0 +1,720 @@
+{
+	"info": {
+		"_postman_id": "api-best-practices-demo",
+		"name": "REST API Best Practices - Week 3",
+		"description": "Collection minh họa 8 nguyên tắc thiết kế REST API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "01. Health & Info",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/health",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "health"]
+						},
+						"description": "Kiểm tra trạng thái API"
+					}
+				},
+				{
+					"name": "API Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1"]
+						},
+						"description": "Thông tin về API"
+					}
+				}
+			]
+		},
+		{
+			"name": "02. Products - CRUD",
+			"item": [
+				{
+					"name": "Get All Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"]
+						},
+						"description": "Lấy danh sách tất cả sản phẩm"
+					}
+				},
+				{
+					"name": "Get Product by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "1"]
+						},
+						"description": "Lấy chi tiết 1 sản phẩm"
+					}
+				},
+				{
+					"name": "Create Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"MacBook Pro M3\",\n  \"price\": 45000000,\n  \"category\": \"electronics\",\n  \"stock\": 10\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"]
+						},
+						"description": "Tạo sản phẩm mới (POST)"
+					}
+				},
+				{
+					"name": "Update Product (PUT)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Laptop Dell XPS 15\",\n  \"price\": 28000000,\n  \"category\": \"electronics\",\n  \"stock\": 20\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "1"]
+						},
+						"description": "Cập nhật toàn bộ thông tin sản phẩm"
+					}
+				},
+				{
+					"name": "Partial Update (PATCH)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"price\": 24000000\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "1"]
+						},
+						"description": "Cập nhật một phần thông tin sản phẩm"
+					}
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "1"]
+						},
+						"description": "Xóa sản phẩm"
+					}
+				}
+			]
+		},
+		{
+			"name": "03. Products - Query Parameters",
+			"item": [
+				{
+					"name": "Filter by Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products?category=electronics",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"],
+							"query": [
+								{
+									"key": "category",
+									"value": "electronics"
+								}
+							]
+						},
+						"description": "Lọc sản phẩm theo danh mục"
+					}
+				},
+				{
+					"name": "Filter by Price Range",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products?min_price=20000000&max_price=30000000",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"],
+							"query": [
+								{
+									"key": "min_price",
+									"value": "20000000"
+								},
+								{
+									"key": "max_price",
+									"value": "30000000"
+								}
+							]
+						},
+						"description": "Lọc sản phẩm theo khoảng giá"
+					}
+				},
+				{
+					"name": "Sort by Price (Ascending)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products?sort_by=price&order=asc",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"],
+							"query": [
+								{
+									"key": "sort_by",
+									"value": "price"
+								},
+								{
+									"key": "order",
+									"value": "asc"
+								}
+							]
+						},
+						"description": "Sắp xếp theo giá tăng dần"
+					}
+				},
+				{
+					"name": "Sort by Price (Descending)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products?sort_by=price&order=desc",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"],
+							"query": [
+								{
+									"key": "sort_by",
+									"value": "price"
+								},
+								{
+									"key": "order",
+									"value": "desc"
+								}
+							]
+						},
+						"description": "Sắp xếp theo giá giảm dần"
+					}
+				},
+				{
+					"name": "Pagination",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products?page=1&limit=2",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "2"
+								}
+							]
+						},
+						"description": "Phân trang danh sách sản phẩm"
+					}
+				},
+				{
+					"name": "Combined Filters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products?category=electronics&sort_by=price&order=asc&page=1&limit=5",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"],
+							"query": [
+								{
+									"key": "category",
+									"value": "electronics"
+								},
+								{
+									"key": "sort_by",
+									"value": "price"
+								},
+								{
+									"key": "order",
+									"value": "asc"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								}
+							]
+						},
+						"description": "Kết hợp nhiều query parameters"
+					}
+				}
+			]
+		},
+		{
+			"name": "04. Users",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/users",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "users"]
+						}
+					}
+				},
+				{
+					"name": "Get User by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/users/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "users", "1"]
+						}
+					}
+				},
+				{
+					"name": "Create User (Valid)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"new-user\",\n  \"email\": \"newuser@example.com\",\n  \"role\": \"user\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/users",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "users"]
+						},
+						"description": "Tạo user với username hợp lệ (lowercase-hyphens)"
+					}
+				},
+				{
+					"name": "Create User (Invalid Username)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"NewUser\",\n  \"email\": \"newuser@example.com\",\n  \"role\": \"user\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/users",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "users"]
+						},
+						"description": "Test validation - username phải lowercase với hyphens"
+					}
+				},
+				{
+					"name": "Filter Users by Role",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/users?role=admin",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "users"],
+							"query": [
+								{
+									"key": "role",
+									"value": "admin"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "05. Orders",
+			"item": [
+				{
+					"name": "Get All Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/orders",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "orders"]
+						}
+					}
+				},
+				{
+					"name": "Get Order by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/orders/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "orders", "1"]
+						}
+					}
+				},
+				{
+					"name": "Filter Orders by Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/orders?status=pending",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "orders"],
+							"query": [
+								{
+									"key": "status",
+									"value": "pending"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Filter Orders by User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/orders?user_id=1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "orders"],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "06. Nested Resources",
+			"item": [
+				{
+					"name": "Get User's Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/users/1/orders",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "users", "1", "orders"]
+						},
+						"description": "Lấy tất cả orders của user 1 (nested resource)"
+					}
+				},
+				{
+					"name": "Get Orders of Non-Existent User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/users/999/orders",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "users", "999", "orders"]
+						},
+						"description": "Test 404 error"
+					}
+				}
+			]
+		},
+		{
+			"name": "07. Action Endpoints",
+			"item": [
+				{
+					"name": "Check Product Availability",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"quantity\": 5\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/1/check-availability",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "1", "check-availability"]
+						},
+						"description": "Action endpoint - Kiểm tra sản phẩm còn đủ hàng không"
+					}
+				},
+				{
+					"name": "Check Large Quantity (Not Available)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"quantity\": 100\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/1/check-availability",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "1", "check-availability"]
+						},
+						"description": "Kiểm tra với số lượng lớn (kết quả: không đủ hàng)"
+					}
+				},
+				{
+					"name": "Cancel Order (Pending)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/orders/2/cancel",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "orders", "2", "cancel"]
+						},
+						"description": "Hủy order có status = pending (should succeed)"
+					}
+				},
+				{
+					"name": "Cancel Order (Completed)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/orders/1/cancel",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "orders", "1", "cancel"]
+						},
+						"description": "Hủy order có status = completed (should fail)"
+					}
+				}
+			]
+		},
+		{
+			"name": "08. Error Testing",
+			"item": [
+				{
+					"name": "404 - Product Not Found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products/999",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products", "999"]
+						},
+						"description": "Test 404 error"
+					}
+				},
+				{
+					"name": "404 - Endpoint Not Found",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/invalid-endpoint",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "invalid-endpoint"]
+						},
+						"description": "Test 404 for invalid endpoint"
+					}
+				},
+				{
+					"name": "405 - Method Not Allowed",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"]
+						},
+						"description": "PUT không được phép trên /products (cần ID)"
+					}
+				},
+				{
+					"name": "422 - Validation Error (Missing Fields)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test Product\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/products",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "products"]
+						},
+						"description": "Thiếu required fields"
+					}
+				},
+				{
+					"name": "422 - Invalid Email Format",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"test-user\",\n  \"email\": \"invalid-email\",\n  \"role\": \"user\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/users",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "5000",
+							"path": ["api", "v1", "users"]
+						},
+						"description": "Email format không hợp lệ"
+					}
+				}
+			]
+		}
+	]
+}
