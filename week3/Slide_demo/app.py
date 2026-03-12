@@ -281,6 +281,134 @@ def search_products():
     }), 200
 
 
+# ============================================================================
+# 4. VERSIONING (Phiên bản API)
+# - URI Versioning: /api/v1/products, /api/v2/products
+# - Header Versioning: Accept: application/vnd.api.v1+json
+# - Query Parameter Versioning: /products?version=1
+# ============================================================================
+
+#  URI Versioning (Phổ biến nhất)
+# Ưu điểm: Dễ hiểu, dễ test, dễ routing
+# Nhược điểm: URL thay đổi khi version thay đổi
+
+# V1: Trả về thông tin cơ bản
+@app.route('/api/v1/users/<int:user_id>', methods=['GET'])
+def get_user_v1(user_id):
+    user = {
+        "id": user_id,
+        "name": "John Doe",
+        "email": "john@example.com"
+    }
+    return jsonify(user), 200
+
+
+# V2: Thêm nhiều thông tin hơn, structure khác
+@app.route('/api/v2/users/<int:user_id>', methods=['GET'])
+def get_user_v2(user_id):
+    user = {
+        "id": user_id,
+        "profile": {
+            "fullName": "John Doe",  # Đổi tên field
+            "firstName": "John",      # Tách riêng
+            "lastName": "Doe"
+        },
+        "contact": {
+            "email": "john@example.com",
+            "phone": "+84123456789"   # Thêm field mới
+        },
+        "metadata": {
+            "createdAt": "2024-01-01",
+            "status": "active"
+        }
+    }
+    return jsonify(user), 200
+
+
+#  Header Versioning
+# Ưu điểm: URI sạch hơn, không thay đổi URL
+# Nhược điểm: Khó test hơn, cần check header
+
+@app.route('/api/users/<int:user_id>', methods=['GET'])
+def get_user_header_version(user_id):
+    # Lấy version từ header
+    api_version = request.headers.get('API-Version', 'v1')
+    
+    if api_version == 'v2':
+        # Version 2: Cấu trúc mới
+        user = {
+            "id": user_id,
+            "profile": {
+                "fullName": "John Doe",
+                "firstName": "John",
+                "lastName": "Doe"
+            },
+            "contact": {
+                "email": "john@example.com",
+                "phone": "+84123456789"
+            }
+        }
+    else:
+        # Version 1: Cấu trúc cũ (default)
+        user = {
+            "id": user_id,
+            "name": "John Doe",
+            "email": "john@example.com"
+        }
+    
+    return jsonify({
+        "version": api_version,
+        "data": user
+    }), 200
+
+
+# Query Parameter Versioning
+# Ưu điểm: Dễ test, không cần thay đổi header
+# Nhược điểm: Có thể làm URL dài hơn
+
+@app.route('/api/customers/<int:customer_id>', methods=['GET'])
+def get_customer_query_version(customer_id):
+    # Lấy version từ query parameter
+    version = request.args.get('v', 'v1')
+    
+    if version == 'v2':
+        # Version 2
+        customer = {
+            "customerId": customer_id,
+            "personalInfo": {
+                "name": "Jane Smith",
+                "age": 30
+            },
+            "orderHistory": {
+                "totalOrders": 15,
+                "totalSpent": 5000
+            }
+        }
+    else:
+        # Version 1 (default)
+        customer = {
+            "id": customer_id,
+            "name": "Jane Smith",
+            "orders": 15
+        }
+    
+    return jsonify({
+        "apiVersion": version,
+        "data": customer
+    }), 200
+
+
+# VERSIONING: Deprecation Warning (Cảnh báo version cũ)
+@app.route('/api/v1/products/deprecated', methods=['GET'])
+def get_deprecated_endpoint():
+    return jsonify({
+        "warning": "This endpoint is deprecated and will be removed in v3",
+        "message": "Please migrate to /api/v2/products",
+        "deprecatedAt": "2024-06-01",
+        "sunsetDate": "2025-01-01",
+        "data": products
+    }), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
