@@ -529,23 +529,5 @@ def internal_server_error(error):
 
 # ==================== MAIN ====================
 if __name__ == '__main__':
-    print("=" * 80)
-    print("REST API Best Practices Demo - Starting...")
-    print("=" * 80)
-    print("\nAPI Server running on: http://localhost:5000")
-    print("\nAvailable endpoints:")
-    print("  GET    /api/v1/health")
-    print("  GET    /api/v1")
-    print("  GET    /api/v1/products")
-    print("  GET    /api/v1/products/{id}")
-    print("  POST   /api/v1/products")
-    print("  PUT    /api/v1/products/{id}")
-    print("  PATCH  /api/v1/products/{id}")
-    print("  DELETE /api/v1/products/{id}")
-    print("  GET    /api/v1/users")
-    print("  POST   /api/v1/users")
-    print("  GET    /api/v1/users/{id}/orders")
-    print("  GET    /api/v1/orders")
-    print("=" * 80)
     
     app.run(debug=True, port=5000)

@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify, send_from_directory, make_response
 from flask_cors import CORS
 from functools import wraps
-from datetime import datetime
+from datetime import datetime, timedelta
+import jwt
+from jwt import ExpiredSignatureError, InvalidTokenError
 
 app = Flask(__name__, static_folder='.')
 CORS(app)
@@ -12,8 +14,10 @@ users = [
     {"id": 2, "name": "Tran Thi B", "email": "b@example.com"}
 ]
 
-# STATELESS: Lưu token giả (trong thực tế dùng JWT)
-valid_tokens = {}
+# JWT demo configuration (hard-coded secret for demo)
+JWT_SECRET = 'dev-secret-for-demo'
+# In-memory store to track issued refresh tokens (simple demo)
+valid_refresh_tokens = set()
 
 # Web page - CLIENT-SERVER
 @app.route('/')
@@ -22,44 +26,79 @@ def home():
 
 # ========== STATELESS - Authentication ==========
 
+
+
 # STATELESS: Login để lấy token
 @app.route('/api/login', methods=['POST'])
 def login():
-    # Server không lưu session, chỉ cấp token
+    # Server cấp access + refresh token (demo)
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
-    
-    # Kiểm tra thông tin đơn giản
+
     if username and password:
-        # Tạo token đơn giản (thực tế dùng JWT)
-        token = f"token_{username}_{len(valid_tokens) + 1}"
-        valid_tokens[token] = username
-        
-        return jsonify({"token": token, "message": "Login successful"}), 200
-    
+        access_payload = {
+            'sub': username,
+            'type': 'access',
+            'exp': datetime.utcnow() + timedelta(minutes=15)
+        }
+        refresh_payload = {
+            'sub': username,
+            'type': 'refresh',
+            'exp': datetime.utcnow() + timedelta(days=7)
+        }
+
+        access_token = jwt.encode(access_payload, JWT_SECRET, algorithm='HS256')
+        refresh_token = jwt.encode(refresh_payload, JWT_SECRET, algorithm='HS256')
+
+        # normalize bytes -> str for PyJWT compatibility
+        if isinstance(access_token, bytes):
+            access_token = access_token.decode('utf-8')
+        if isinstance(refresh_token, bytes):
+            refresh_token = refresh_token.decode('utf-8')
+
+        # store refresh token (simple revocation support)
+        valid_refresh_tokens.add(refresh_token)
+
+        return jsonify({"access_token": access_token, "refresh_token": refresh_token, "message": "Login successful"}), 200
+
     return jsonify({"error": "Invalid credentials"}), 401
 
-# STATELESS: Decorator kiểm tra token
-def require_token(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        # Lấy token từ header
-        auth_header = request.headers.get('Authorization')
-        
-        if not auth_header or not auth_header.startswith('Bearer '):
-            return jsonify({"error": "Missing or invalid token"}), 401
-        
-        token = auth_header.replace('Bearer ', '')
-        
-        # Kiểm tra token có hợp lệ không
-        if token not in valid_tokens:
-            return jsonify({"error": "Invalid token"}), 401
-        
-        # Token hợp lệ, tiếp tục xử lý request
-        return f(*args, **kwargs)
-    
-    return decorated
+# REFRESH: Tạo access token mới từ refresh token
+@app.route('/api/refresh', methods=['POST'])
+def refresh():
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return jsonify({"error": "Missing or invalid token"}), 401
+
+    refresh_token = auth_header.replace('Bearer ', '')
+
+    try:
+        payload = jwt.decode(refresh_token, JWT_SECRET, algorithms=['HS256'])
+    except ExpiredSignatureError:
+        return jsonify({"error": "Refresh token expired"}), 401
+    except InvalidTokenError:
+        return jsonify({"error": "Invalid refresh token"}), 401
+
+    if payload.get('type') != 'refresh':
+        return jsonify({"error": "Invalid token type"}), 401
+
+    # check stored refresh tokens
+    if refresh_token not in valid_refresh_tokens:
+        return jsonify({"error": "Refresh token revoked or unknown"}), 401
+
+    username = payload.get('sub')
+    new_access_payload = {
+        'sub': username,
+        'type': 'access',
+        'exp': datetime.utcnow() + timedelta(minutes=15)
+    }
+
+    new_access = jwt.encode(new_access_payload, JWT_SECRET, algorithm='HS256')
+    if isinstance(new_access, bytes):
+        new_access = new_access.decode('utf-8')
+
+    return jsonify({"access_token": new_access}), 200
 
 # ========== CACHEABLE - HTTP Caching Headers ==========
 
@@ -88,7 +127,7 @@ def set_cache_control(duration=300):
 
 # C - CREATE: Tạo user mới (POST) - Không cache
 @app.route('/api/users', methods=['POST'])
-@require_token
+@jwt_required()
 def create_user():
     data = request.get_json()
     
@@ -111,14 +150,14 @@ def create_user():
 
 # R - READ: Lấy tất cả users (GET) - Cache 5 phút
 @app.route('/api/users', methods=['GET'])
-@require_token
+@jwt_required()
 @set_cache_control(duration=300)
 def get_users():
     return jsonify(users), 200
 
 # R - READ: Lấy 1 user theo ID (GET) - Cache 5 phút
 @app.route('/api/users/<int:user_id>', methods=['GET'])
-@require_token
+@jwt_required()
 @set_cache_control(duration=300)
 def get_user(user_id):
     # Tìm user theo ID
