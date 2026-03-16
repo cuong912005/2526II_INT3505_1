@@ -1,0 +1,277 @@
+# OpenAPI 3.0 Specification - Book Management API
+# 5 endpoints: List, Get, Create, Update, Delete
+openapi: "3.0.3"
+
+info:
+  title: Book Management API
+  description: |
+    RESTful API quản lý sách với 5 endpoints cơ bản (CRUD).
+    Sử dụng chuẩn OpenAPI 3.0, tích hợp Swagger UI để trình bày tài liệu tự động.
+  version: "1.0.0"
+  contact:
+    name: SOA Week4 Demo
+
+servers:
+  - url: http://localhost:5000
+    description: Local development server
+
+tags:
+  - name: Books
+    description: Quản lý sách (CRUD)
+
+paths:
+  # ────────────────────────────────────────────
+  # 1) GET /api/v1/books — Lấy danh sách sách
+  # ────────────────────────────────────────────
+  /api/v1/books:
+    get:
+      tags: [Books]
+      summary: Lấy danh sách tất cả sách
+      description: |
+        Trả về mảng các cuốn sách. Hỗ trợ filter theo author
+        và search theo title qua query params.
+      operationId: listBooks
+      parameters:
+        - name: author
+          in: query
+          description: Lọc sách theo tên tác giả
+          required: false
+          schema:
+            type: string
+          example: "Nguyen Nhat Anh"
+        - name: search
+          in: query
+          description: Tìm kiếm theo tiêu đề sách (không phân biệt hoa thường)
+          required: false
+          schema:
+            type: string
+          example: "toi thay hoa"
+      responses:
+        "200":
+          description: Danh sách sách
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Book"
+                  total:
+                    type: integer
+                    example: 3
+
+    # ──────────────────────────────────────
+    # 2) POST /api/v1/books — Thêm sách mới
+    # ──────────────────────────────────────
+    post:
+      tags: [Books]
+      summary: Thêm một cuốn sách mới
+      description: Tạo sách mới với title, author, year. Trả về sách vừa tạo kèm id.
+      operationId: createBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookInput"
+            example:
+              title: "Dế Mèn Phiêu Lưu Ký"
+              author: "Tô Hoài"
+              year: 1941
+      responses:
+        "201":
+          description: Sách được tạo thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Book created successfully"
+                  data:
+                    $ref: "#/components/schemas/Book"
+        "400":
+          description: Thiếu trường bắt buộc
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "Missing required field: title"
+
+  # ───────────────────────────────────────────────
+  # 3) GET /api/v1/books/{id} — Lấy chi tiết 1 cuốn
+  # ───────────────────────────────────────────────
+  /api/v1/books/{id}:
+    get:
+      tags: [Books]
+      summary: Lấy thông tin một cuốn sách
+      description: Trả về chi tiết sách theo id.
+      operationId: getBook
+      parameters:
+        - $ref: "#/components/parameters/BookId"
+      responses:
+        "200":
+          description: Chi tiết sách
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: "#/components/schemas/Book"
+        "404":
+          description: Không tìm thấy sách
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                success: false
+                message: "Book not found"
+
+    # ──────────────────────────────────────────
+    # 4) PUT /api/v1/books/{id} — Cập nhật sách
+    # ──────────────────────────────────────────
+    put:
+      tags: [Books]
+      summary: Cập nhật thông tin sách
+      description: Cập nhật một hoặc nhiều trường (title, author, year) của sách theo id.
+      operationId: updateBook
+      parameters:
+        - $ref: "#/components/parameters/BookId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookInput"
+            example:
+              title: "Dế Mèn Phiêu Lưu Ký (Tái bản)"
+              author: "Tô Hoài"
+              year: 2020
+      responses:
+        "200":
+          description: Cập nhật thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Book updated successfully"
+                  data:
+                    $ref: "#/components/schemas/Book"
+        "404":
+          description: Không tìm thấy sách
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    # ────────────────────────────────────
+    # 5) DELETE /api/v1/books/{id} — Xoá sách
+    # ────────────────────────────────────
+    delete:
+      tags: [Books]
+      summary: Xoá một cuốn sách
+      description: Xoá sách theo id. Trả về 204 nếu thành công.
+      operationId: deleteBook
+      parameters:
+        - $ref: "#/components/parameters/BookId"
+      responses:
+        "200":
+          description: Xoá thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Book deleted successfully"
+        "404":
+          description: Không tìm thấy sách
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+# ══════════════════════════════════════════
+# Reusable Components
+# ══════════════════════════════════════════
+components:
+  schemas:
+    Book:
+      type: object
+      description: Đối tượng sách đầy đủ (có id)
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "Tôi Thấy Hoa Vàng Trên Cỏ Xanh"
+        author:
+          type: string
+          example: "Nguyen Nhat Anh"
+        year:
+          type: integer
+          example: 2010
+      required: [id, title, author, year]
+
+    BookInput:
+      type: object
+      description: Dữ liệu đầu vào khi tạo/cập nhật sách
+      properties:
+        title:
+          type: string
+          example: "Dế Mèn Phiêu Lưu Ký"
+        author:
+          type: string
+          example: "Tô Hoài"
+        year:
+          type: integer
+          example: 1941
+      required: [title, author, year]
+
+    Error:
+      type: object
+      description: Phản hồi lỗi chuẩn
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "Something went wrong"
+
+  parameters:
+    BookId:
+      name: id
+      in: path
+      description: ID của cuốn sách
+      required: true
+      schema:
+        type: integer
+      example: 1
