@@ -1,0 +1,239 @@
+{
+  "info": {
+    "_postman_id": "12345678-1234-1234-1234-123456789012",
+    "name": "Book Management API",
+    "description": "Collection for Book Management API - 5 CRUD endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. GET - List all books",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5000/api/v1/books",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "v1",
+            "books"
+          ]
+        },
+        "description": "Lấy danh sách tất cả sách"
+      },
+      "response": []
+    },
+    {
+      "name": "1a. GET - List books with author filter",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5000/api/v1/books?author=Nguyen Nhat Anh",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "v1",
+            "books"
+          ],
+          "query": [
+            {
+              "key": "author",
+              "value": "Nguyen Nhat Anh"
+            }
+          ]
+        },
+        "description": "Lấy danh sách sách lọc theo tác giả"
+      },
+      "response": []
+    },
+    {
+      "name": "1b. GET - Search books by title",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5000/api/v1/books?search=Dế Mèn",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "v1",
+            "books"
+          ],
+          "query": [
+            {
+              "key": "search",
+              "value": "Dế Mèn"
+            }
+          ]
+        },
+        "description": "Tìm kiếm sách theo tiêu đề"
+      },
+      "response": []
+    },
+    {
+      "name": "2. POST - Create new book",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Dế Mèn Phiêu Lưu Ký\",\n  \"author\": \"Tô Hoài\",\n  \"year\": 1941\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/v1/books",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "v1",
+            "books"
+          ]
+        },
+        "description": "Thêm một cuốn sách mới"
+      },
+      "response": []
+    },
+    {
+      "name": "3. GET - Get book by ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5000/api/v1/books/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "v1",
+            "books",
+            "1"
+          ]
+        },
+        "description": "Lấy thông tin chi tiết một cuốn sách theo ID"
+      },
+      "response": []
+    },
+    {
+      "name": "4. PUT - Update book",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Tôi Thấy Hoa Vàng Trên Cỏ Xanh (Tái bản lần 2)\",\n  \"author\": \"Nguyen Nhat Anh\",\n  \"year\": 2020\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/v1/books/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "v1",
+            "books",
+            "1"
+          ]
+        },
+        "description": "Cập nhật thông tin một cuốn sách"
+      },
+      "response": []
+    },
+    {
+      "name": "5. DELETE - Delete book",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5000/api/v1/books/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "v1",
+            "books",
+            "1"
+          ]
+        },
+        "description": "Xoá một cuốn sách theo ID"
+      },
+      "response": []
+    }
+  ]
+}

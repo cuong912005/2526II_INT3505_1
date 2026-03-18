@@ -1,8 +1,3 @@
-# ═══════════════════════════════════════════════════════════════
-# Week4 - OpenAPI & Swagger UI Demo
-# API quản lý sách (5 endpoints) với tài liệu tự động
-# ═══════════════════════════════════════════════════════════════
-
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
@@ -30,6 +25,7 @@ app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 # Đọc file openapi.yaml và trả về dạng JSON cho Swagger UI render
 @app.route("/api/spec")
 def get_spec():
+    
     spec_path = os.path.join(os.path.dirname(__file__), "openapi.yaml")
     with open(spec_path, "r", encoding="utf-8") as f:
         spec = yaml.safe_load(f)
@@ -37,16 +33,15 @@ def get_spec():
 
 
 # ─── In-memory data store ────────────────────────────────────
-# Dữ liệu mẫu, lưu trong bộ nhớ (reset khi restart server)
+
 books = [
     {"id": 1, "title": "Tôi Thấy Hoa Vàng Trên Cỏ Xanh", "author": "Nguyen Nhat Anh", "year": 2010},
     {"id": 2, "title": "Dế Mèn Phiêu Lưu Ký", "author": "Tô Hoài", "year": 1941},
     {"id": 3, "title": "Số Đỏ", "author": "Vũ Trọng Phụng", "year": 1936},
 ]
-next_id = 4  # auto-increment counter
+next_id = 4  # auto-increment id
 
-
-# ─── Helper: tìm sách theo id ────────────────────────────────
+# ─── Tìm sách theo id ────────────────────────────────
 def find_book(book_id):
     return next((b for b in books if b["id"] == book_id), None)
 
@@ -158,7 +153,7 @@ def method_not_allowed(e):
     return jsonify({"success": False, "message": "Method not allowed"}), 405
 
 
-# ─── Entry point ─────────────────────────────────────────────
+# Main entry point
 if __name__ == "__main__":
     print("=" * 55)
     print("  Book Management API")
