@@ -2,6 +2,8 @@
 
 ## Installation
 
+### Windows (PowerShell) & Linux/Mac (Bash)
+
 ```bash
 # Cài Drafter (parser)
 npm install -g drafter

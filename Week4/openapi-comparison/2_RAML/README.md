@@ -2,6 +2,22 @@
 
 ## Installation
 
+### Windows (PowerShell)
+
+```powershell
+# Cài RAML parser
+npm install -g raml-parser
+
+# Parse RAML file
+raml-parser api.raml
+
+# Convert RAML to OpenAPI
+npm install -g raml-to-openapi
+raml-to-openapi api.raml | Out-File openapi.json
+```
+
+### Linux/Mac (Bash)
+
 ```bash
 # Cài RAML parser
 npm install -g raml-parser
