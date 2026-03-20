@@ -3,256 +3,92 @@ HOST: http://localhost:3000/api/v1
 
 # Book Management API
 
-CRUD API for managing books with support for filtering and pagination.
-
----
+CRUD API for managing books.
 
 ## Books Collection [/books]
 
 ### List all books [GET]
-
-Retrieve a list of all books with optional filtering by category.
-
 + Parameters
     + category (string, optional) - Filter by category
-    + limit (number, optional, default: `10`) - Max results to return
-    + offset (number, optional, default: `0`) - Results to skip
+    + limit (number, optional) - Max results
+    + offset (number, optional) - Skip results
 
 + Response 200 (application/json)
-
-    + Attributes (object)
-        + books (array[Book]) - List of books
-        + total (number) - Total book count
-
     + Body
-
             {
               "books": [
-                {
-                  "id": "123e4567-e89b-12d3-a456-426614174000",
-                  "title": "The Great Gatsby",
-                  "author": "F. Scott Fitzgerald",
-                  "isbn": "9780743273565",
-                  "publishYear": 1925,
-                  "price": 10.99,
-                  "category": "Classic"
-                }
+                {"id": "1", "title": "The Great Gatsby", "author": "F. Scott Fitzgerald", "isbn": "978-0-7432-7356-5", "publishYear": 1925, "price": 10.99, "category": "Classic"}
               ],
               "total": 1
             }
 
 ### Create a new book [POST]
-
-Add a new book to the library.
-
-+ Attributes (CreateBook)
-
 + Request (application/json)
-
     + Body
-
             {
               "title": "The Great Gatsby",
               "author": "F. Scott Fitzgerald",
-              "isbn": "9780743273565",
+              "isbn": "978-0-7432-7356-5",
               "publishYear": 1925,
               "price": 10.99,
               "category": "Classic"
             }
 
 + Response 201 (application/json)
-
-    + Attributes (Book)
-
     + Body
-
             {
-              "id": "123e4567-e89b-12d3-a456-426614174000",
+              "id": "1",
               "title": "The Great Gatsby",
               "author": "F. Scott Fitzgerald",
-              "isbn": "9780743273565",
+              "isbn": "978-0-7432-7356-5",
               "publishYear": 1925,
               "price": 10.99,
               "category": "Classic"
             }
-
-+ Response 400 (application/json)
-
-    + Attributes (Error)
-
-    + Body
-
-            {
-              "code": 400,
-              "message": "Invalid request body"
-            }
-
----
 
 ## Book Resource [/books/{id}]
 
 ### Get book by ID [GET]
-
-Retrieve details of a specific book.
-
 + Parameters
-    + id (string, required) - Book ID (UUID format)
+    + id (string, required) - Book ID
 
 + Response 200 (application/json)
-
-    + Attributes (Book)
-
     + Body
-
             {
-              "id": "123e4567-e89b-12d3-a456-426614174000",
+              "id": "1",
               "title": "The Great Gatsby",
               "author": "F. Scott Fitzgerald",
-              "isbn": "9780743273565",
+              "isbn": "978-0-7432-7356-5",
               "publishYear": 1925,
               "price": 10.99,
               "category": "Classic"
             }
 
-+ Response 404 (application/json)
-
-    + Attributes (Error)
-
-    + Body
-
-            {
-              "code": 404,
-              "message": "Book not found"
-            }
-
 ### Update book [PUT]
-
-Update information of an existing book.
-
 + Parameters
-    + id (string, required) - Book ID (UUID format)
-
-+ Attributes (UpdateBook)
+    + id (string, required) - Book ID
 
 + Request (application/json)
-
     + Body
-
             {
               "title": "The Great Gatsby (Revised)",
               "price": 12.99
             }
 
 + Response 200 (application/json)
-
-    + Attributes (Book)
-
     + Body
-
             {
-              "id": "123e4567-e89b-12d3-a456-426614174000",
+              "id": "1",
               "title": "The Great Gatsby (Revised)",
               "author": "F. Scott Fitzgerald",
-              "isbn": "9780743273565",
+              "isbn": "978-0-7432-7356-5",
               "publishYear": 1925,
               "price": 12.99,
               "category": "Classic"
             }
 
-+ Response 404 (application/json)
-
-    + Attributes (Error)
-
-    + Body
-
-            {
-              "code": 404,
-              "message": "Book not found"
-            }
-
 ### Delete book [DELETE]
-
-Remove a book from the library.
-
 + Parameters
-    + id (string, required) - Book ID (UUID format)
+    + id (string, required) - Book ID
 
 + Response 204
-
-+ Response 404 (application/json)
-
-    + Attributes (Error)
-
-    + Body
-
-            {
-              "code": 404,
-              "message": "Book not found"
-            }
-
----
-
-# Data Structures
-
-## Book (object)
-
-Complete book information.
-
-+ id: `123e4567-e89b-12d3-a456-426614174000` (string, required) - Book ID
-+ title: `The Great Gatsby` (string, required) - Book title
-+ author: `F. Scott Fitzgerald` (string, required) - Author name
-+ isbn: `9780743273565` (string, optional) - ISBN code
-+ publishYear: `1925` (number, optional) - Publication year
-+ price: `10.99` (number, optional) - Price in USD
-+ category: `Classic` (enum[string], optional) - Book category
-    + Members
-        + `Classic`
-        + `Fiction`
-        + `Science`
-        + `History`
-        + `Biography`
-        + `Technology`
-
-## CreateBook (object)
-
-Request body for creating a new book.
-
-+ title: `The Great Gatsby` (string, required) - Book title
-+ author: `F. Scott Fitzgerald` (string, required) - Author name
-+ isbn: `9780743273565` (string, optional) - ISBN code
-+ publishYear: `1925` (number, optional) - Publication year
-+ price: `10.99` (number, optional) - Price in USD
-+ category: `Classic` (enum[string], optional) - Book category
-    + Members
-        + `Classic`
-        + `Fiction`
-        + `Science`
-        + `History`
-        + `Biography`
-        + `Technology`
-
-## UpdateBook (object)
-
-Request body for updating a book (all fields optional).
-
-+ title: `The Great Gatsby (Revised)` (string, optional) - Book title
-+ author: `F. Scott Fitzgerald` (string, optional) - Author name
-+ isbn: `9780743273565` (string, optional) - ISBN code
-+ publishYear: `1925` (number, optional) - Publication year
-+ price: `10.99` (number, optional) - Price in USD
-+ category: `Classic` (enum[string], optional) - Book category
-    + Members
-        + `Classic`
-        + `Fiction`
-        + `Science`
-        + `History`
-        + `Biography`
-        + `Technology`
-
-## Error (object)
-
-Error response object.
-
-+ code: `400` (number, required) - Error code
-+ message: `Invalid request` (string, required) - Error message
-+ details: `{}` (object, optional) - Additional error details

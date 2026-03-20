@@ -1,0 +1,200 @@
+openapi: 3.0.0
+info:
+  title: Book Management API
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /books:
+    get:
+      operationId: books_get
+      parameters:
+      - explode: true
+        in: query
+        name: category
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/_books_get_200_response"
+          description: List of books
+      summary: Get all books
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+    post:
+      operationId: books_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBook"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+          description: Book created
+      summary: Create a book
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+  /books/{id}:
+    delete:
+      operationId: books_id_delete
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: Book deleted
+      summary: Delete a book
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+    get:
+      operationId: books_id_get
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+          description: Book details
+      summary: Get book by ID
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+    put:
+      operationId: books_id_put
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBook"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+          description: Book updated
+      summary: Update a book
+      x-openapi-router-controller: openapi_server.controllers.default_controller
+components:
+  schemas:
+    Book:
+      example:
+        publishYear: 0
+        author: author
+        price: 6.027456183070403
+        isbn: isbn
+        id: id
+        title: title
+        category: category
+      properties:
+        id:
+          title: id
+          type: string
+        title:
+          title: title
+          type: string
+        author:
+          title: author
+          type: string
+        isbn:
+          title: isbn
+          type: string
+        publishYear:
+          title: publishYear
+          type: integer
+        price:
+          title: price
+          type: number
+        category:
+          title: category
+          type: string
+      title: Book
+      type: object
+    CreateBook:
+      example:
+        publishYear: 0
+        author: author
+        price: 6.027456183070403
+        isbn: isbn
+        title: title
+        category: category
+      properties:
+        title:
+          title: title
+          type: string
+        author:
+          title: author
+          type: string
+        isbn:
+          title: isbn
+          type: string
+        publishYear:
+          title: publishYear
+          type: integer
+        price:
+          title: price
+          type: number
+        category:
+          title: category
+          type: string
+      required:
+      - author
+      - title
+      title: CreateBook
+      type: object
+    _books_get_200_response:
+      example:
+        total: 1
+        books:
+        - publishYear: 0
+          author: author
+          price: 6.027456183070403
+          isbn: isbn
+          id: id
+          title: title
+          category: category
+        - publishYear: 0
+          author: author
+          price: 6.027456183070403
+          isbn: isbn
+          id: id
+          title: title
+          category: category
+      properties:
+        books:
+          items:
+            $ref: "#/components/schemas/Book"
+          title: books
+          type: array
+        total:
+          title: total
+          type: integer
+      title: _books_get_200_response
+      type: object
