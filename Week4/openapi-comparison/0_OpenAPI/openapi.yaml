@@ -1,0 +1,306 @@
+openapi: 3.0.0
+info:
+  title: Book Management API
+  description: CRUD API for managing books
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@bookapi.com
+
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Development server
+  - url: https://api.bookstore.com/v1
+    description: Production server
+
+paths:
+  /books:
+    get:
+      summary: Get all books
+      description: Retrieve a list of all books with optional filtering
+      operationId: listBooks
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+          description: Filter by category
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+          description: Number of results to return
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+          description: Number of results to skip
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  books:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Book'
+                  total:
+                    type: integer
+              example:
+                books:
+                  - id: "123e4567-e89b-12d3-a456-426614174000"
+                    title: "The Great Gatsby"
+                    author: "F. Scott Fitzgerald"
+                    isbn: "9780743273565"
+                    publishYear: 1925
+                    price: 10.99
+                    category: "Classic"
+                total: 1
+
+    post:
+      summary: Create a new book
+      description: Add a new book to the library
+      operationId: createBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookRequest'
+            example:
+              title: "The Great Gatsby"
+              author: "F. Scott Fitzgerald"
+              isbn: "9780743273565"
+              publishYear: 1925
+              price: 10.99
+              category: "Classic"
+      responses:
+        '201':
+          description: Book created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /books/{id}:
+    get:
+      summary: Get book by ID
+      description: Retrieve details of a specific book
+      operationId: getBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Book ID
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Book not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: Update book
+      description: Update information of an existing book
+      operationId: updateBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Book ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBookRequest'
+      responses:
+        '200':
+          description: Book updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Book not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Delete book
+      description: Remove a book from the library
+      operationId: deleteBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Book ID
+      responses:
+        '204':
+          description: Book deleted successfully
+        '404':
+          description: Book not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Book:
+      type: object
+      required:
+        - id
+        - title
+        - author
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Book unique identifier
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Book title
+        author:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Author name
+        isbn:
+          type: string
+          pattern: '^\d{10}(\d{3})?$'
+          description: ISBN-10 or ISBN-13
+        publishYear:
+          type: integer
+          minimum: 1000
+          maximum: 2100
+          description: Year of publication
+        price:
+          type: number
+          format: double
+          minimum: 0
+          description: Book price in USD
+        category:
+          type: string
+          enum:
+            - Classic
+            - Fiction
+            - Science
+            - History
+            - Biography
+            - Technology
+          description: Book category
+
+    CreateBookRequest:
+      type: object
+      required:
+        - title
+        - author
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        author:
+          type: string
+          minLength: 1
+          maxLength: 100
+        isbn:
+          type: string
+          pattern: '^\d{10}(\d{3})?$'
+        publishYear:
+          type: integer
+          minimum: 1000
+          maximum: 2100
+        price:
+          type: number
+          format: double
+          minimum: 0
+        category:
+          type: string
+          enum:
+            - Classic
+            - Fiction
+            - Science
+            - History
+            - Biography
+            - Technology
+
+    UpdateBookRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        author:
+          type: string
+          minLength: 1
+          maxLength: 100
+        isbn:
+          type: string
+          pattern: '^\d{10}(\d{3})?$'
+        publishYear:
+          type: integer
+          minimum: 1000
+          maximum: 2100
+        price:
+          type: number
+          format: double
+          minimum: 0
+        category:
+          type: string
+          enum:
+            - Classic
+            - Fiction
+            - Science
+            - History
+            - Biography
+            - Technology
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: Error code
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details

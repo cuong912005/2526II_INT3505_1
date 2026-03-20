@@ -1,0 +1,324 @@
+#%RAML 1.0
+---
+title: Book Management API
+version: v1
+baseUri: http://localhost:3000/api/v1
+protocols:
+  - HTTP
+  - HTTPS
+mediaType:
+  - application/json
+documentation:
+  - title: Overview
+    content: |
+      CRUD API for managing books.
+      Supports filtering, pagination, and standard REST operations.
+
+types:
+  Book:
+    type: object
+    description: Complete book information
+    properties:
+      id:
+        type: string
+        pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+        description: Book unique identifier (UUID)
+      title:
+        type: string
+        minLength: 1
+        maxLength: 200
+        description: Book title
+        required: true
+      author:
+        type: string
+        minLength: 1
+        maxLength: 100
+        description: Author name
+        required: true
+      isbn:
+        type: string
+        pattern: '^\d{10}(\d{3})?$'
+        description: ISBN-10 or ISBN-13
+      publishYear:
+        type: integer
+        minimum: 1000
+        maximum: 2100
+        description: Year of publication
+      price:
+        type: number
+        format: double
+        minimum: 0
+        description: Book price in USD
+      category:
+        type: string
+        enum:
+          - Classic
+          - Fiction
+          - Science
+          - History
+          - Biography
+          - Technology
+        description: Book category
+
+  CreateBookRequest:
+    type: object
+    description: Request to create a new book
+    properties:
+      title:
+        type: string
+        minLength: 1
+        maxLength: 200
+        required: true
+      author:
+        type: string
+        minLength: 1
+        maxLength: 100
+        required: true
+      isbn:
+        type: string
+        pattern: '^\d{10}(\d{3})?$'
+      publishYear:
+        type: integer
+        minimum: 1000
+        maximum: 2100
+      price:
+        type: number
+        format: double
+        minimum: 0
+      category:
+        type: string
+        enum:
+          - Classic
+          - Fiction
+          - Science
+          - History
+          - Biography
+          - Technology
+
+  UpdateBookRequest:
+    type: object
+    description: Request to update a book (all fields optional)
+    properties:
+      title:
+        type: string
+        minLength: 1
+        maxLength: 200
+      author:
+        type: string
+        minLength: 1
+        maxLength: 100
+      isbn:
+        type: string
+        pattern: '^\d{10}(\d{3})?$'
+      publishYear:
+        type: integer
+        minimum: 1000
+        maximum: 2100
+      price:
+        type: number
+        format: double
+        minimum: 0
+      category:
+        type: string
+        enum:
+          - Classic
+          - Fiction
+          - Science
+          - History
+          - Biography
+          - Technology
+
+  ListBooksResponse:
+    type: object
+    description: Response containing list of books
+    properties:
+      books:
+        type: Book[]
+        description: Array of books
+        required: true
+      total:
+        type: integer
+        description: Total number of books
+        required: true
+
+  Error:
+    type: object
+    description: Error response
+    properties:
+      code:
+        type: integer
+        required: true
+      message:
+        type: string
+        required: true
+      details:
+        type: object
+
+traits:
+  paginated:
+    queryParameters:
+      limit:
+        type: integer
+        required: false
+        default: 10
+        minimum: 1
+        maximum: 100
+        description: Max number of results
+      offset:
+        type: integer
+        required: false
+        default: 0
+        minimum: 0
+        description: Number of results to skip
+
+  searchable:
+    queryParameters:
+      category:
+        type: string
+        required: false
+        enum:
+          - Classic
+          - Fiction
+          - Science
+          - History
+          - Biography
+          - Technology
+        description: Filter by category
+
+  standardError:
+    responses:
+      404:
+        body:
+          application/json:
+            type: Error
+            example:
+              code: 404
+              message: Book not found
+      400:
+        body:
+          application/json:
+            type: Error
+            example:
+              code: 400
+              message: Invalid request
+
+/books:
+  displayName: Books Collection
+  description: Collection of books
+
+  get:
+    displayName: List all books
+    description: Retrieve a list of all books with optional filtering and pagination
+    is:
+      - paginated
+      - searchable
+    responses:
+      200:
+        description: Successful response
+        body:
+          application/json:
+            type: ListBooksResponse
+            example:
+              books:
+                - id: 123e4567-e89b-12d3-a456-426614174000
+                  title: The Great Gatsby
+                  author: F. Scott Fitzgerald
+                  isbn: "9780743273565"
+                  publishYear: 1925
+                  price: 10.99
+                  category: Classic
+              total: 1
+
+  post:
+    displayName: Create a new book
+    description: Add a new book to the library
+    is:
+      - standardError
+    body:
+      application/json:
+        type: CreateBookRequest
+        example:
+          title: The Great Gatsby
+          author: F. Scott Fitzgerald
+          isbn: "9780743273565"
+          publishYear: 1925
+          price: 10.99
+          category: Classic
+    responses:
+      201:
+        description: Book created successfully
+        body:
+          application/json:
+            type: Book
+            example:
+              id: 123e4567-e89b-12d3-a456-426614174000
+              title: The Great Gatsby
+              author: F. Scott Fitzgerald
+              isbn: "9780743273565"
+              publishYear: 1925
+              price: 10.99
+              category: Classic
+
+  /{id}:
+    displayName: Book Resource
+    description: Individual book resource
+    uriParameters:
+      id:
+        type: string
+        pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+        description: Book ID (UUID)
+
+    get:
+      displayName: Get book by ID
+      description: Retrieve details of a specific book
+      is:
+        - standardError
+      responses:
+        200:
+          description: Successful response
+          body:
+            application/json:
+              type: Book
+              example:
+                id: 123e4567-e89b-12d3-a456-426614174000
+                title: The Great Gatsby
+                author: F. Scott Fitzgerald
+                isbn: "9780743273565"
+                publishYear: 1925
+                price: 10.99
+                category: Classic
+
+    put:
+      displayName: Update book
+      description: Update information of an existing book
+      is:
+        - standardError
+      body:
+        application/json:
+          type: UpdateBookRequest
+          example:
+            title: The Great Gatsby (Revised)
+            price: 12.99
+      responses:
+        200:
+          description: Book updated successfully
+          body:
+            application/json:
+              type: Book
+              example:
+                id: 123e4567-e89b-12d3-a456-426614174000
+                title: The Great Gatsby (Revised)
+                author: F. Scott Fitzgerald
+                isbn: "9780743273565"
+                publishYear: 1925
+                price: 12.99
+                category: Classic
+
+    delete:
+      displayName: Delete book
+      description: Remove a book from the library
+      is:
+        - standardError
+      responses:
+        204:
+          description: Book deleted successfully
