@@ -61,7 +61,7 @@ Learning/Comparison        → Tất cả 4 để so sánh
 
 ## Xem Chi tiết
 
-Gi vào từng folder (0_OpenAPI, 1_APIBlueprint, 2_RAML, 3_TypeSpec) để:
+Vào từng folder (0_OpenAPI, 1_APIBlueprint, 2_RAML, 3_TypeSpec) để:
 - Xem file API spec ở từng format
 - Đọc README hướng dẫn cài 1 tool demo
 - Xem SLIDE_CONTENT.md để hiểu rõ hơn

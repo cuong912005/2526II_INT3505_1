@@ -67,21 +67,27 @@ op listBooks(): Book[];
 
 ## 3. Tooling & Ecosystem
 
-| Aspect | OpenAPI | API Blueprint | RAML | TypeSpec |
-|--------|---------|---------------|------|----------|
-| **Code Generator** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
-| **Documentation** | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ |
-| **Mock Server** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ |
-| **IDE Support** | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| Tool | OpenAPI | API Blueprint | RAML | TypeSpec |
+|------|---------|---------------|------|----------|
+| **Code Gen** | Cao | Thấp | Thấp | Trung |
+| **Documentation** | Cao | Thấp | Trung | Trung |
+| **Mock Server** | Cao | Trung | Trung | Trung |
+| **IDE Support** | Cao | Thấp | Trung | Trung |
+
+**Ví dụ tool**:
+- **OpenAPI**: `openapi-generator-cli`, Swagger UI, Prism
+- **API Blueprint**: `drafter`, `aglio`, Drakov
+- **RAML**: `raml2html`, `raml-parser`, Hogan
+- **TypeSpec**: `tsp` CLI, OpenAPI 3 emitter
 
 ## 4. Use Cases
 
-| Format | Best for | Không dùng nếu |
-|--------|----------|----------------|
-| **OpenAPI** | Enterprise, public APIs, chuẩn hóa | Cần markdown style |
-| **API Blueprint** | Team nhỏ, sketch nhanh, human-readable | ❌ Cần stable format |
-| **RAML** | MuleSoft ecosystem, API-first, DRY code | Ít adoption, cộng đồng nhỏ |
-| **TypeSpec** | Modern teams (TS/JS), Azure, type-safe | ⚠️ Chưa v1.0 stable |
+| Format | Nên dùng khi | Lý do |
+|--------|-----------|--------|
+| **OpenAPI** | Dự án enterprise, public APIs | Chuẩn công nghiệp, tooling phong phú |
+| **API Blueprint** | Team nhỏ, sketch nhanh | Dễ học (Markdown), nhưng ngừng phát triển |
+| **RAML** | MuleSoft ecosystem, API-first | Traits reusable, DRY code |
+| **TypeSpec** | Modern teams (TS/JS), Azure | Type-safe, familiar syntax, nhưng v0.x |
 
 ## 5. Ví dụ: POST /books (Tạo sách)
 
@@ -135,33 +141,4 @@ op createBook(@body book: CreateBook): Book;
 | Parameter | `parameters` | `+ Parameters` | `uriParameters` | `@query/@path` |
 | Response | `responses` | `+ Response` | `responses` | `→ ReturnType` |
 
-## 7. Kết luận
 
-### Decision Matrix
-
-```
-Project type                 → Khuyến cáo
-─────────────────────────────────────────
-Enterprise / Public API      → OpenAPI 3.0+
-Modern TS/JS team, Azure     → TypeSpec (v0.x)
-MuleSoft ecosystem           → RAML
-Team nhỏ, quick sketch       → API Blueprint (⚠️)
-Learning / Comparison        → Tất cả 4
-```
-
-### Migration Path
-```
-API Blueprint ──→ OpenAPI (tool: drafter)
-RAML ──→ OpenAPI (tool: raml2openapi)
-TypeSpec ──→ OpenAPI (native emit)
-```
-
-## 8. File API Demo
-
-Mỗi folder có cùng 1 API (Book CRUD) ở 4 format:
-- `0_OpenAPI/openapi.yaml`
-- `1_APIBlueprint/api.apib`
-- `2_RAML/api.raml`
-- `3_TypeSpec/main.tsp`
-
-**Các endpoint giống nhau**: GET, POST, PUT, DELETE /books/{id}

@@ -3,13 +3,15 @@
 ## Installation
 
 ```bash
-# Cài raml2html (HTML generator)
-npm install -g raml2html
+# Cài RAML parser
+npm install -g raml-parser
 
-# Tạo HTML documentation
-raml2html api.raml > api.html
+# Parse RAML file
+raml-parser api.raml
 
-# Xem tại localhost
-python -m http.server 8000
-# Truy cập http://localhost:8000/api.html
+# Convert RAML to OpenAPI
+npm install -g raml-to-openapi
+raml-to-openapi api.raml > openapi.json
 ```
+
+**Note**: RAML không có code generator riêng. Convert sang OpenAPI để sinh code.

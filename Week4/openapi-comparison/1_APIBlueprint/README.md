@@ -3,13 +3,11 @@
 ## Installation
 
 ```bash
-# Cài Aglio (HTML generator)
-npm install -g aglio
+# Cài Drafter (parser)
+npm install -g drafter
 
-# Tạo HTML documentation
-aglio -i api.apib -o api.html
-
-# Xem tại localhost
-aglio -i api.apib -s
-# Truy cập http://localhost:3000
+# Parse API Blueprint file
+drafter api.apib -o api.json
 ```
+
+**Note**: API Blueprint không có code generator. Chủ yếu dùng cho documentation & mock server.
