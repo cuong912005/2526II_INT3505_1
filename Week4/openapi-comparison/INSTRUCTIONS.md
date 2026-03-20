@@ -1,127 +1,67 @@
-# Hướng dẫn cài đặt Tools
+# Phương pháp So sánh & Dàn ý chung
 
-## 1. OpenAPI
+## Tiêu chí So sánh
 
-### Cài đặt
-```bash
-# Cài đặt Swagger UI (Docker)
-docker run -p 8080:8080 -e SWAGGER_JSON=/data/openapi.yaml -v $(pwd)/0_OpenAPI:/data swaggerapi/swagger-ui
+| Tiêu chí | Mô tả |
+|----------|-------|
+| **Lịch sử & Status** | Khi nào phát triển, còn active không |
+| **Syntax & Dễ học** | Style viết, dốc học, readability |
+| **Type System** | Hỗ trợ kiểu dữ liệu, validation |
+| **Reusability** | Tái sử dụng code, traits, components |
+| **Tooling** | Code gen, mock server, documentation, IDE |
+| **Community & Adoption** | Cộng đồng, popularity, industry standard |
+| **Use Cases** | Phù hợp cho loại dự án nào |
+| **Ưu & Nhược** | Điểm mạnh, điểm yếu |
 
-# Hoặc dùng Node.js
-npm install -g @openapitools/openapi-generator
+---
 
-# Hoặc dùng Python
-pip install openapi-spec-validator
+## Dàn ý So sánh 4 Format
+
+### OpenAPI
+- **Status**: Chuẩn công nghiệp, OAS 3.1 (2024)
+- **Style**: YAML/JSON, verbose & explicit
+- **Best for**: Enterprise, public APIs, chuẩn hóa
+- **Tooling**: ⭐⭐⭐⭐⭐ (Swagger UI, code gen, mock)
+- **Learning**: Medium (7/10) - nhiều khái niệm
+
+### API Blueprint
+- **Status**: ❌ Ngừng phát triển (2023)
+- **Style**: Markdown-based, human-readable
+- **Best for**: Sketch nhanh, team nhỏ, documentation
+- **Tooling**: ⭐⭐ (Aglio, Draker mock)
+- **Learning**: Easy (3/10) - gần như Markdown
+
+### RAML
+- **Status**: Vẫn support, ít adoption
+- **Style**: YAML, DRY principle, traits reusable
+- **Best for**: MuleSoft ecosystem, API-first design
+- **Tooling**: ⭐⭐⭐ (raml2html, moderate support)
+- **Learning**: Medium-Hard (6/10) - cần hiểu syntax
+
+### TypeSpec
+- **Status**: 🚀 Mới (Microsoft, v0.x → v1.0)
+- **Style**: TypeScript-like, type-safe, modern
+- **Best for**: Teams quen TS/JS, Azure, modern approach
+- **Tooling**: ⭐⭐⭐⭐ (emitters, emerging)
+- **Learning**: Easy (4/10) - familiar syntax
+
+---
+
+## Khuyến cáo Nhanh
+
+```
+Dự án mới, enterprise       → OpenAPI 3.0+ ✅
+Team TypeScript/JS modern   → TypeSpec (soon v1.0)
+MuleSoft ecosystem          → RAML
+Ngừng support              → ❌ API Blueprint
+Learning/Comparison        → Tất cả 4 để so sánh
 ```
 
-### Sinh code từ OpenAPI
-```bash
-# Node.js (Express)
-openapi-generator-cli generate -i openapi.yaml -g nodejs-express-server -o generated
+---
 
-# Python (Flask)
-openapi-generator-cli generate -i openapi.yaml -g python-flask -o generated
+## Xem Chi tiết
 
-# Java (Spring Boot)
-openapi-generator-cli generate -i openapi.yaml -g spring -o generated
-```
-
-### Xem documentation
-```bash
-# Docker Compose
-docker-compose up swagger-ui
-# Truy cập http://localhost:8080
-```
-
-## 2. API Blueprint
-
-### Cài đặt
-```bash
-# Cài đặt Drafter (parser)
-npm install -g drafter
-
-# Cài đặt Aglio (HTML renderer)
-npm install -g aglio
-```
-
-### Sinh code từ API Blueprint
-```bash
-# Parse & validate
-drafter api.apib -o api.json
-
-# Generate HTML documentation
-aglio -i api.apib -o api.html
-```
-
-## 3. RAML
-
-### Cài đặt
-```bash
-# RAML parser
-npm install -g raml2html
-
-# VS Code extension
-# Tìm "RAML" trong Extensions marketplace
-```
-
-### Sinh code từ RAML
-```bash
-# Generate HTML
-raml2html api.raml > api.html
-
-# Cài thêm RAML JavaScript parser
-npm install -g raml-parser
-```
-
-## 4. TypeSpec
-
-### Cài đặt
-```bash
-# Cài đặt TypeSpec compiler
-npm install -g @typespec/compiler
-
-# Cài các emitter khác
-npm install @typespec/openapi3
-npm install @typespec/rest
-```
-
-### Sinh code từ TypeSpec
-```bash
-# Compile TypeSpec
-tsp compile . --output-dir dist
-
-# Tạo OpenAPI từ TypeSpec
-tsp compile . --option @typespec/openapi3.output-file=openapi.yaml
-```
-
-## Công cụ chung
-
-### Postman / Insomnia
-- Import OpenAPI JSON → Tận dụng ngay
-- Cần convert định dạng khác về OpenAPI hoặc dùng custom scripts
-
-### Validator Online
-- https://www.swagger.io/tools/swagger-editor/  (OpenAPI)
-- https://apiblueprint.org/ (API Blueprint)
-- https://apiworkbench.com/ (RAML)
-- https://microsoft.github.io/typespec/playground/ (TypeSpec)
-
-## Quick Test (API Blueprint example)
-
-```bash
-# 1. Install dependencies
-npm install drafter aglio
-
-# 2. Parse API Blueprint
-npx drafter api.apib
-
-# 3. Generate HTML documentation
-npx aglio -i api.apib -o api.html -s
-
-# 4. Open in browser
-open api.html
-```
-
-## Docker Compose (All-in-One)
-
-Xem file `docker-compose.yml` trong parent directory để chạy tất cả các tool cùng lúc.
+Gi vào từng folder (0_OpenAPI, 1_APIBlueprint, 2_RAML, 3_TypeSpec) để:
+- Xem file API spec ở từng format
+- Đọc README hướng dẫn cài 1 tool demo
+- Xem SLIDE_CONTENT.md để hiểu rõ hơn
