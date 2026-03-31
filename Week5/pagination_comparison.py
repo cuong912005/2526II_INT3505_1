@@ -33,8 +33,8 @@ orders_db = [Order(i, (i % 5) + 1, 100 + i * 10, datetime(2025, 1, (i % 28) + 1)
 
 # ========== PAGINATION IMPLEMENTATION 1: OFFSET/LIMIT ==========
 def paginate_offset_limit(data, offset=0, limit=10):
-    # Example: offset=0, limit=10 -> get items 0-9
-    # Example: offset=10, limit=10 -> get items 10-19
+    # Example: offset=0, limit=10 -> lấy 0-9
+    # Example: offset=10, limit=10 -> lấy 10-19
     total = len(data)
     paginated = data[offset:offset + limit]
     
@@ -60,8 +60,8 @@ for p in result['data']:
 
 # ========== PAGINATION IMPLEMENTATION 2: PAGE-BASED ==========
 def paginate_page_based(data, page=1, page_size=10):
-    # Example: page=1, page_size=10 -> get items 0-9 (first page)
-    # Example: page=2, page_size=10 -> get items 10-19 (second page)
+    # Example: page=1, page_size=10 -> lấy  0-9 (trang đầu)
+    # Example: page=2, page_size=10 -> lấy 10-19 (trang thứ 2)
     total = len(data)
     total_pages = (total + page_size - 1) // page_size
     offset = (page - 1) * page_size
@@ -89,11 +89,11 @@ for p in result['data']:
 
 # ========== PAGINATION IMPLEMENTATION 3: CURSOR-BASED ==========
 def paginate_cursor_based(data, cursor=None, limit=10, cursor_field='id'):
-    # Cursor format: "next_42" means start after item with id=42
+    # cursor format: cursor="next_12" -> bắt đầu với item có id=12
     if cursor:
         prefix, cursor_value = cursor.split('_')
         cursor_id = int(cursor_value)
-        # Find first item with id > cursor_id
+        # tìm kiếm vị trí bắt đầu dựa trên cursor_id
         start_index = next((i for i, item in enumerate(data) if item.id > cursor_id), len(data))
     else:
         start_index = 0
