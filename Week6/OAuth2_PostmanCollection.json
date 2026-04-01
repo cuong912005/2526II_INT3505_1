@@ -1,0 +1,404 @@
+{
+  "info": {
+    "_postman_id": "oauth2-auth-system",
+    "name": "OAuth 2.0 + JWT Auth System",
+    "description": "Complete OAuth 2.0 Authorization Server with JWT tokens",
+    "version": "2.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "auth_code",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "JWT Authentication (Traditional)",
+      "item": [
+        {
+          "name": "1. JWT Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"alice\",\n  \"password\": \"alice123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Get JWT access and refresh tokens"
+          }
+        },
+        {
+          "name": "2. JWT Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "refresh"]
+            },
+            "description": "Get new access token using refresh token"
+          }
+        },
+        {
+          "name": "3. JWT Get Token Info",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/info",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "info"]
+            },
+            "description": "Get information about current JWT token"
+          }
+        },
+        {
+          "name": "4. JWT Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            },
+            "description": "Logout and blacklist current token"
+          }
+        }
+      ]
+    },
+    {
+      "name": "OAuth 2.0 - Authorization Code Flow",
+      "item": [
+        {
+          "name": "1. OAuth - Login to grant permission",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"alice\",\n  \"password\": \"alice123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/oauth/login",
+              "host": ["{{base_url}}"],
+              "path": ["oauth", "login"]
+            },
+            "description": "User logs in to authorize/grant permissions"
+          }
+        },
+        {
+          "name": "2. OAuth - Authorize endpoint (Manual)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/oauth/authorize?response_type=code&client_id=web-app-client&redirect_uri=http://localhost:3000/oauth/callback&scope=read:products%20write:products&state=random-state-12345",
+              "host": ["{{base_url}}"],
+              "path": ["oauth", "authorize"],
+              "query": [
+                {
+                  "key": "response_type",
+                  "value": "code"
+                },
+                {
+                  "key": "client_id",
+                  "value": "web-app-client"
+                },
+                {
+                  "key": "redirect_uri",
+                  "value": "http://localhost:3000/oauth/callback"
+                },
+                {
+                  "key": "scope",
+                  "value": "read:products write:products"
+                },
+                {
+                  "key": "state",
+                  "value": "random-state-12345"
+                }
+              ]
+            },
+            "description": "Initiates OAuth flow (copy authorization code from response)"
+          }
+        },
+        {
+          "name": "3. OAuth - Exchange code for token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"grant_type\": \"authorization_code\",\n  \"code\": \"{{auth_code}}\",\n  \"client_id\": \"web-app-client\",\n  \"client_secret\": \"web-app-secret-12345\",\n  \"redirect_uri\": \"http://localhost:3000/oauth/callback\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/oauth/token",
+              "host": ["{{base_url}}"],
+              "path": ["oauth", "token"]
+            },
+            "description": "Exchange authorization code for access token"
+          }
+        }
+      ]
+    },
+    {
+      "name": "OAuth 2.0 - Client Credentials Flow",
+      "item": [
+        {
+          "name": "1. Client Credentials - Get Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"grant_type\": \"client_credentials\",\n  \"client_id\": \"backend-service\",\n  \"client_secret\": \"backend-service-secret-99999\",\n  \"scope\": \"read:products write:products\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/oauth/token",
+              "host": ["{{base_url}}"],
+              "path": ["oauth", "token"]
+            },
+            "description": "Get access token for server-to-server authentication (no user)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "OAuth 2.0 - Token Management",
+      "item": [
+        {
+          "name": "1. Token Introspection",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{access_token}}\",\n  \"client_id\": \"web-app-client\",\n  \"client_secret\": \"web-app-secret-12345\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/oauth/introspect",
+              "host": ["{{base_url}}"],
+              "path": ["oauth", "introspect"]
+            },
+            "description": "Check if token is valid and get token claims"
+          }
+        },
+        {
+          "name": "2. Token Revocation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{access_token}}\",\n  \"client_id\": \"web-app-client\",\n  \"client_secret\": \"web-app-secret-12345\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/oauth/revoke",
+              "host": ["{{base_url}}"],
+              "path": ["oauth", "revoke"]
+            },
+            "description": "Revoke/blacklist a token"
+          }
+        },
+        {
+          "name": "3. List OAuth Clients",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/oauth/clients",
+              "host": ["{{base_url}}"],
+              "path": ["oauth", "clients"]
+            },
+            "description": "List all registered OAuth 2.0 clients"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Protected Resources",
+      "item": [
+        {
+          "name": "1. Get Products (Scope: read:products)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": ["{{base_url}}"],
+              "path": ["products"]
+            },
+            "description": "Get list of products (requires read:products scope)"
+          }
+        },
+        {
+          "name": "2. Create Product (Scope: write:products)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Monitor 4K\",\n  \"price\": 499.99\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": ["{{base_url}}"],
+              "path": ["products"]
+            },
+            "description": "Create new product (requires write:products scope)"
+          }
+        },
+        {
+          "name": "3. Get Orders (Role: user)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/orders",
+              "host": ["{{base_url}}"],
+              "path": ["orders"]
+            },
+            "description": "Get user's orders (requires user role)"
+          }
+        },
+        {
+          "name": "4. Admin - List Users (Role: admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/users",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "users"]
+            },
+            "description": "List all users (requires admin role)"
+          }
+        },
+        {
+          "name": "5. Admin - Delete User (Role: admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/users/2",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "users", "2"]
+            },
+            "description": "Delete user by ID (requires admin role)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        },
+        "description": "Check if server is running"
+      }
+    }
+  ]
+}
