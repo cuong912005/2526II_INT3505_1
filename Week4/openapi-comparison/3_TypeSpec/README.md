@@ -19,6 +19,7 @@ npm install -g @openapitools/openapi-generator-cli
 openapi-generator-cli generate -i openapi.yaml -g nodejs-express-server -o ./generated-server
 ```
 
+
 ### Linux/Mac (Bash)
 
 ```bash

@@ -12,4 +12,6 @@ npm install -g drafter
 drafter api.apib -o api.json
 ```
 
+
+
 **Note**: API Blueprint không có code generator. Chủ yếu dùng cho documentation & mock server.

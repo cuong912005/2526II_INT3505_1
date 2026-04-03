@@ -1,0 +1,464 @@
+{
+  "info": {
+    "name": "JWT Authentication + OAuth 2.0 API",
+    "description": "Complete authentication and authorization API with JWT and OAuth 2.0 flows",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "🔐 Authentication (JWT)",
+      "description": "JWT-based authentication endpoints",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"alice\",\n  \"password\": \"alice123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login with username and password to get access and refresh tokens"
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/auth/refresh",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "Use refresh token to get a new access token"
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/auth/logout",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Logout and blacklist the current access token"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔑 OAuth 2.0",
+      "description": "OAuth 2.0 authorization server endpoints",
+      "item": [
+        {
+          "name": "Step 1: Authorization Request",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/oauth/authorize?response_type=code&client_id=web-app-client&redirect_uri=http://localhost:3000/callback&scope=read:products%20write:products&state=random_state_123",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "oauth",
+                "authorize"
+              ],
+              "query": [
+                {
+                  "key": "response_type",
+                  "value": "code"
+                },
+                {
+                  "key": "client_id",
+                  "value": "web-app-client"
+                },
+                {
+                  "key": "redirect_uri",
+                  "value": "http://localhost:3000/callback"
+                },
+                {
+                  "key": "scope",
+                  "value": "read:products write:products"
+                },
+                {
+                  "key": "state",
+                  "value": "random_state_123"
+                }
+              ]
+            },
+            "description": "Step 1: User is redirected to login page and authorizes the client"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 2: Token Exchange (Authorization Code)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"grant_type\": \"authorization_code\",\n  \"code\": \"AUTH_CODE_HERE\",\n  \"client_id\": \"web-app-client\",\n  \"client_secret\": \"web-app-secret-12345\",\n  \"redirect_uri\": \"http://localhost:3000/callback\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/oauth/token",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "oauth",
+                "token"
+              ]
+            },
+            "description": "Step 2: Exchange authorization code for access token"
+          },
+          "response": []
+        },
+        {
+          "name": "Implicit Grant Flow",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/oauth/authorize?response_type=token&client_id=mobile-app-client&redirect_uri=app://callback&scope=read:products&state=random_state_456",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "oauth",
+                "authorize"
+              ],
+              "query": [
+                {
+                  "key": "response_type",
+                  "value": "token"
+                },
+                {
+                  "key": "client_id",
+                  "value": "mobile-app-client"
+                },
+                {
+                  "key": "redirect_uri",
+                  "value": "app://callback"
+                },
+                {
+                  "key": "scope",
+                  "value": "read:products"
+                },
+                {
+                  "key": "state",
+                  "value": "random_state_456"
+                }
+              ]
+            },
+            "description": "Implicit flow - returns access token directly (use with caution)"
+          },
+          "response": []
+        },
+        {
+          "name": "Client Credentials Flow",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"grant_type\": \"client_credentials\",\n  \"client_id\": \"backend-service\",\n  \"client_secret\": \"backend-service-secret-99999\",\n  \"scope\": \"backend:full\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/oauth/token",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "oauth",
+                "token"
+              ]
+            },
+            "description": "Client credentials flow - for service-to-service authentication"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📦 Protected Resources",
+      "description": "Protected endpoints requiring authentication",
+      "item": [
+        {
+          "name": "Get Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/products",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "products"
+              ]
+            },
+            "description": "Get list of products (requires read:products scope)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Monitor 4K\",\n  \"price\": 450\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/products",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "products"
+              ]
+            },
+            "description": "Create a new product (requires write:products scope)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/orders",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "orders"
+              ]
+            },
+            "description": "Get user's orders (requires user role)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "👨‍💼 Admin Resources",
+      "description": "Admin-only protected endpoints",
+      "item": [
+        {
+          "name": "List All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/admin/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "admin",
+                "users"
+              ]
+            },
+            "description": "Get all users (admin role required)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/admin/users/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "admin",
+                "users",
+                "2"
+              ]
+            },
+            "description": "Delete a user by ID (admin role required)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "ℹ️ Public Endpoints",
+      "description": "Public endpoints requiring no authentication",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/health",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Check server health status"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Token Info",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/auth/info",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "auth",
+                "info"
+              ]
+            },
+            "description": "Get information about current authentication token"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string",
+      "description": "JWT access token from login"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string",
+      "description": "Refresh token for obtaining new access tokens"
+    }
+  ]
+}

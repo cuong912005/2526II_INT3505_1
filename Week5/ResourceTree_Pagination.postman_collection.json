@@ -1,0 +1,599 @@
+{
+  "info": {
+    "name": "Resource Tree & Pagination API",
+    "description": "E-commerce API demonstrating resource tree design and pagination strategies (Offset/Limit, Page-based, Cursor-based)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "👥 Users (Offset/Limit Pagination)",
+      "description": "User management endpoints using offset/limit pagination strategy",
+      "item": [
+        {
+          "name": "List Users - First Page",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/users?offset=0&limit=5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "offset",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Get first 5 users using offset/limit pagination (skip 0 items, take 5)"
+          },
+          "response": []
+        },
+        {
+          "name": "List Users - Second Page",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/users?offset=5&limit=5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "offset",
+                  "value": "5"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Get next 5 users (skip 5, take 5)"
+          },
+          "response": []
+        },
+        {
+          "name": "List Users - Third Page",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/users?offset=10&limit=5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "offset",
+                  "value": "10"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Get users 10-14 (skip 10, take 5)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Detail",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/users/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "users",
+                "1"
+              ]
+            },
+            "description": "Get specific user by ID"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📦 Products (Page-based Pagination)",
+      "description": "Product catalog endpoints using page-based pagination strategy",
+      "item": [
+        {
+          "name": "List Products - Page 1",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/products?page=1&page_size=5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "page_size",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Get first page of products (page 1, 5 items per page)"
+          },
+          "response": []
+        },
+        {
+          "name": "List Products - Page 2",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/products?page=2&page_size=5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2"
+                },
+                {
+                  "key": "page_size",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Get second page of products (page 2, 5 items per page)"
+          },
+          "response": []
+        },
+        {
+          "name": "List Products - Page 3",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/products?page=3&page_size=5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "3"
+                },
+                {
+                  "key": "page_size",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Get third page of products"
+          },
+          "response": []
+        },
+        {
+          "name": "List Products - Custom Page Size",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/products?page=1&page_size=10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "page_size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Get products with custom page size (10 items per page)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product Detail",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/products/5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "products",
+                "5"
+              ]
+            },
+            "description": "Get specific product by ID"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📋 Orders (Cursor-based Pagination)",
+      "description": "Order management endpoints using cursor-based pagination strategy",
+      "item": [
+        {
+          "name": "List Orders - First Batch",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/orders?limit=5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Get first batch of orders with cursor pagination (no cursor = start from beginning)"
+          },
+          "response": []
+        },
+        {
+          "name": "List Orders - Second Batch",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/orders?cursor=next_5&limit=5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "cursor",
+                  "value": "next_5"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Get next batch using cursor (cursor points to last item from previous response)"
+          },
+          "response": []
+        },
+        {
+          "name": "List Orders - Third Batch",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/orders?cursor=next_10&limit=5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "cursor",
+                  "value": "next_10"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Get third batch using updated cursor"
+          },
+          "response": []
+        },
+        {
+          "name": "List Orders - Large Limit",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/orders?limit=10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Get first 10 orders with cursor pagination"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order Detail",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/orders/3",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "orders",
+                "3"
+              ]
+            },
+            "description": "Get specific order by ID"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔗 Nested Resources - User Orders",
+      "description": "Nested resource endpoints for user's orders (using offset/limit pagination)",
+      "item": [
+        {
+          "name": "List User 1 Orders - First Page",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/users/1/orders?offset=0&limit=5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "users",
+                "1",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "offset",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Get first page of orders for user ID 1"
+          },
+          "response": []
+        },
+        {
+          "name": "List User 2 Orders - First Page",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/users/2/orders?offset=0&limit=5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "users",
+                "2",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "offset",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Get first page of orders for user ID 2"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Specific User Order",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/users/1/orders/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "users",
+                "1",
+                "orders",
+                "1"
+              ]
+            },
+            "description": "Get specific order (order ID 1) for user ID 1"
+          },
+          "response": []
+        },
+        {
+          "name": "Get User 1 Order 2",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/users/1/orders/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "users",
+                "1",
+                "orders",
+                "2"
+              ]
+            },
+            "description": "Get order ID 2 for user ID 1"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📊 Pagination Comparison",
+      "description": "Endpoints demonstrating all three pagination strategies for comparison",
+      "item": [
+        {
+          "name": "Strategy Comparison - Offset/Limit",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/users?offset=0&limit=10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "offset",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Example: ?offset=0&limit=10 - Skip 0, take 10 items"
+          },
+          "response": []
+        },
+        {
+          "name": "Strategy Comparison - Page-based",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/products?page=1&page_size=10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "page_size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Example: ?page=1&page_size=10 - Page 1 with 10 items per page"
+          },
+          "response": []
+        },
+        {
+          "name": "Strategy Comparison - Cursor-based",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/orders?limit=10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Example: ?limit=10 - Get first 10 items, use returned cursor for next batch"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
