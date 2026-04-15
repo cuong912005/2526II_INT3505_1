@@ -1,0 +1,261 @@
+{
+  "info": {
+    "_postman_id": "book-api-tests",
+    "name": "Book API Test Suite",
+    "description": "Complete test suite for Book Management API with unit and integration tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Health Check",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code 200', function() {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response has status ok', function() {",
+              "  var json = pm.response.json();",
+              "  pm.expect(json.status).to.equal('ok');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/health",
+          "host": ["{{base_url}}"],
+          "path": ["api", "health"]
+        }
+      }
+    },
+    {
+      "name": "2. GET All Books",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code 200', function() {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response is array', function() {",
+              "  var json = pm.response.json();",
+              "  pm.expect(Array.isArray(json)).to.be.true;",
+              "});",
+              "pm.test('Books have required fields', function() {",
+              "  var json = pm.response.json();",
+              "  json.forEach(book => {",
+              "    pm.expect(book).to.have.property('id');",
+              "    pm.expect(book).to.have.property('title');",
+              "    pm.expect(book).to.have.property('author');",
+              "  });",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/books",
+          "host": ["{{base_url}}"],
+          "path": ["api", "books"]
+        }
+      }
+    },
+    {
+      "name": "3. POST Create Book",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code 201', function() {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "pm.test('Response has id', function() {",
+              "  var json = pm.response.json();",
+              "  pm.expect(json).to.have.property('id');",
+              "  pm.environment.set('created_book_id', json.id);",
+              "});",
+              "pm.test('Response matches request data', function() {",
+              "  var json = pm.response.json();",
+              "  pm.expect(json.title).to.equal('Clean Code');",
+              "  pm.expect(json.author).to.equal('Robert Martin');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"title\": \"Clean Code\", \"author\": \"Robert Martin\", \"year\": 2008, \"price\": 39.99}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/books",
+          "host": ["{{base_url}}"],
+          "path": ["api", "books"]
+        }
+      }
+    },
+    {
+      "name": "4. GET Book by ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code 200', function() {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response has correct structure', function() {",
+              "  var json = pm.response.json();",
+              "  pm.expect(json).to.have.property('id');",
+              "  pm.expect(json).to.have.property('title');",
+              "  pm.expect(json).to.have.property('author');",
+              "  pm.expect(json).to.have.property('price');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/books/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "books", "1"]
+        }
+      }
+    },
+    {
+      "name": "5. PUT Update Book",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code 200', function() {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Book price updated', function() {",
+              "  var json = pm.response.json();",
+              "  pm.expect(json.price).to.equal(49.99);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"price\": 49.99}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/books/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "books", "1"]
+        }
+      }
+    },
+    {
+      "name": "6. DELETE Book",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code 200', function() {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response confirms deletion', function() {",
+              "  var json = pm.response.json();",
+              "  pm.expect(json.message).to.equal('Book deleted');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/books/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "books", "1"]
+        }
+      }
+    },
+    {
+      "name": "7. GET Search Books",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code 200', function() {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response is array', function() {",
+              "  var json = pm.response.json();",
+              "  pm.expect(Array.isArray(json)).to.be.true;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/books?search=Python",
+          "host": ["{{base_url}}"],
+          "path": ["api", "books"],
+          "query": [
+            {
+              "key": "search",
+              "value": "Python"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    }
+  ]
+}
