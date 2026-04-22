@@ -56,7 +56,7 @@ MONGO_CONFIG = {
     'database': os.getenv('MONGO_DB_NAME', 'product_db'),
     'uri': os.getenv(
         'MONGO_URI',
-        'mongodb+srv://username:password@cluster.mongodb.net/product_db?retryWrites=true&w=majority&appName=MyApp'
+        'mongodb+srv://cuong:<db_password>@cluster0.1os2cjc.mongodb.net/?appName=Cluster0'
     ),
     'connection_timeout': int(os.getenv('MONGO_CONNECTION_TIMEOUT', '5000')),
     'server_selection_timeout': int(os.getenv('MONGO_SERVER_SELECTION_TIMEOUT', '5000')),
